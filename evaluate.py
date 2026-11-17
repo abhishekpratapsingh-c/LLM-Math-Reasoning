@@ -274,13 +274,15 @@ def reevaluate_results_file(csv_path: str):
 if __name__ == "__main__":
     base_file = os.path.join(os.path.dirname(__file__), "results", "baseline_results.csv")
     sbs_file = os.path.join(os.path.dirname(__file__), "results", "step_by_step_results.csv")
+    few_shot_file = os.path.join(os.path.dirname(__file__), "results", "few_shot_results.csv")
 
-    for f in [base_file, sbs_file]:
-        res = reevaluate_results_file(f)
-        if res:
-            print(f"Results for {os.path.basename(res['file'])}:")
-            print(f"  Original Accuracy: {res['orig_accuracy']:.2f}% ({res['orig_correct']}/{res['total']})")
-            print(f"  New Accuracy:      {res['new_accuracy']:.2f}% ({res['new_correct']}/{res['total']})")
-            print(f"  Changes ({len(res['changes'])}):")
-            for c in res['changes']:
-                print(f"    Q{c['index']}: '{c['old_predicted']}' ({c['old_is_correct']}) -> '{c['new_predicted']}' ({c['new_is_correct']})")
+    for f in [base_file, sbs_file, few_shot_file]:
+        if os.path.exists(f):
+            res = reevaluate_results_file(f)
+            if res:
+                print(f"Results for {os.path.basename(res['file'])}:")
+                print(f"  Original Accuracy: {res['orig_accuracy']:.2f}% ({res['orig_correct']}/{res['total']})")
+                print(f"  New Accuracy:      {res['new_accuracy']:.2f}% ({res['new_correct']}/{res['total']})")
+                print(f"  Changes ({len(res['changes'])}):")
+                for c in res['changes']:
+                    print(f"    Q{c['index']}: '{c['old_predicted']}' ({c['old_is_correct']}) -> '{c['new_predicted']}' ({c['new_is_correct']})")

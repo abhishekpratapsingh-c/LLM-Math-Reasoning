@@ -21,11 +21,31 @@ PROMPTS = {
         "Explain each step clearly and provide the final numerical answer.\n\n"
         "Question: {question}"
     ),
+    "few_shot": (
+        "Solve the following mathematical problems by showing step-by-step calculations and stating the final answer.\n\n"
+        "Example 1:\n"
+        "Question: Sarah has 5 boxes, each containing 4 chocolates. How many chocolates does Sarah have in total?\n"
+        "Solution:\n"
+        "Step 1: Identify the number of boxes: 5 boxes.\n"
+        "Step 2: Identify the number of chocolates in each box: 4 chocolates.\n"
+        "Step 3: Multiply the number of boxes by the chocolates per box: 5 * 4 = 20 chocolates.\n"
+        "Final Answer: 20\n\n"
+        "Example 2:\n"
+        "Question: A person buys a notebook for ₹30 and a pen for ₹10. What is the total cost of the purchase?\n"
+        "Solution:\n"
+        "Step 1: Identify the cost of the notebook: ₹30.\n"
+        "Step 2: Identify the cost of the pen: ₹10.\n"
+        "Step 3: Add the cost of both items: 30 + 10 = ₹40.\n"
+        "Final Answer: 40\n\n"
+        "Now solve this problem:\n"
+        "Question: {question}"
+    ),
 }
 
 OUTPUT_FILES = {
     "baseline": "baseline_results.csv",
     "step_by_step": "step_by_step_results.csv",
+    "few_shot": "few_shot_results.csv",
 }
 
 

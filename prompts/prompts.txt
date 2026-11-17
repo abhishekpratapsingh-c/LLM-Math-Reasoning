@@ -9,3 +9,25 @@ Break the problem into smaller calculations.
 Explain each step clearly and provide the final numerical answer.
 
 Question: {question}
+
+=== Few-Shot Prompt ===
+Solve the following mathematical problems by showing step-by-step calculations and stating the final answer.
+
+Example 1:
+Question: Sarah has 5 boxes, each containing 4 chocolates. How many chocolates does Sarah have in total?
+Solution:
+Step 1: Identify the number of boxes: 5 boxes.
+Step 2: Identify the number of chocolates in each box: 4 chocolates.
+Step 3: Multiply the number of boxes by the chocolates per box: 5 * 4 = 20 chocolates.
+Final Answer: 20
+
+Example 2:
+Question: A person buys a notebook for ₹30 and a pen for ₹10. What is the total cost of the purchase?
+Solution:
+Step 1: Identify the cost of the notebook: ₹30.
+Step 2: Identify the cost of the pen: ₹10.
+Step 3: Add the cost of both items: 30 + 10 = ₹40.
+Final Answer: 40
+
+Now solve this problem:
+Question: {question}
