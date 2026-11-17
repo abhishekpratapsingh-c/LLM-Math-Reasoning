@@ -1,1 +1,11 @@
+=== Baseline Prompt ===
+Solve the following mathematical problem and provide the final answer.
 
+Question: {question}
+
+=== Step-by-Step Prompt ===
+Solve the following mathematical problem step by step.
+Break the problem into smaller calculations.
+Explain each step clearly and provide the final numerical answer.
+
+Question: {question}

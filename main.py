@@ -4,16 +4,41 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI, APIStatusError
 
-# Ensure current directory is on sys.path for local imports
+# Ensure current directory is accessible for local module imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from evaluate import extract_ground_truth, extract_model_answer, compare_answers
 
 
-def main():
-    # Load environment variables
-    load_dotenv()
+# Prompt templates for Phase 1 experiments
+PROMPTS = {
+    "baseline": (
+        "Solve the following mathematical problem and provide the final answer.\n\n"
+        "Question: {question}"
+    ),
+    "step_by_step": (
+        "Solve the following mathematical problem step by step.\n"
+        "Break the problem into smaller calculations.\n"
+        "Explain each step clearly and provide the final numerical answer.\n\n"
+        "Question: {question}"
+    ),
+}
 
-    # 14. Keep API key in .env and never print it
+OUTPUT_FILES = {
+    "baseline": "baseline_results.csv",
+    "step_by_step": "step_by_step_results.csv",
+}
+
+
+def run_experiment(technique: str = "step_by_step", num_questions: int = 20):
+    """
+    Executes a mathematical reasoning experiment on GSM8K using a specified prompting technique.
+    """
+    if technique not in PROMPTS:
+        print(f"Error: Unknown technique '{technique}'. Available: {list(PROMPTS.keys())}")
+        return
+
+    # 3 & 13. Load environment variables securely (API key is never printed or hardcoded)
+    load_dotenv()
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         print("Error: 'GROQ_API_KEY' not found in environment or .env file.")
@@ -26,10 +51,10 @@ def main():
         base_url="https://api.groq.com/openai/v1",
     )
 
-    # 2. Model specification
+    # 2. Consistent model specification across experiments
     model_name = "openai/gpt-oss-120b"
 
-    # 1. Read first 20 questions from data/gsm8k_data.csv
+    # 1. Read first 20 questions from data/gsm8k_data.csv (unchanged)
     data_path = os.path.join(os.path.dirname(__file__), "data", "gsm8k_data.csv")
     try:
         df = pd.read_csv(data_path)
@@ -43,29 +68,27 @@ def main():
         print(f"Error reading dataset: {e}")
         return
 
-    # Select only the first 20 questions
-    df_subset = df.head(20)
-    print(f"Starting Baseline Experiment: {len(df_subset)} questions using model '{model_name}'...\n")
+    df_subset = df.head(num_questions)
+    experiment_title = technique.replace("_", " ").upper()
+    print(f"Starting {experiment_title} Experiment ({len(df_subset)} questions) using model '{model_name}'...\n")
 
     results = []
+    prompt_template = PROMPTS[technique]
 
     for idx, row in df_subset.iterrows():
         question = str(row["question"]).strip()
         raw_answer = str(row["answer"])
 
-        # 6. Extract ground truth answer (after ####)
+        # Ground truth extraction (using evaluate.py)
         correct_answer = extract_ground_truth(raw_answer)
 
-        # 3. Exact baseline prompt format
-        prompt = (
-            f"Solve the following mathematical problem and provide the final answer.\n\n"
-            f"Question: {question}"
-        )
+        # 4. Construct prompt for current question
+        prompt = prompt_template.format(question=question)
 
         print(f"[{idx + 1}/{len(df_subset)}] Processing question...")
 
         model_response = ""
-        # 4 & 11. Send question with API error handling
+        # 5 & 13. Call Groq API with robust error handling
         try:
             response = client.chat.completions.create(
                 model=model_name,
@@ -82,15 +105,15 @@ def main():
             print(f"  Unexpected error on question {idx + 1}: {e}")
             model_response = f"ERROR: {e}"
 
-        # 6. Extract predicted answer from model response
+        # 7. Reuse corrected answer extraction logic from evaluate.py
         predicted_answer = extract_model_answer(model_response)
 
-        # 7. Compare predicted answer with correct answer
+        # Compare predicted answer with ground truth
         is_correct = compare_answers(predicted_answer, correct_answer)
 
         print(f"  Predicted: '{predicted_answer}' | Correct: '{correct_answer}' | Match: {is_correct}")
 
-        # 5. Store question details
+        # 6. Save experiment fields
         results.append({
             "question": question,
             "correct_answer": correct_answer,
@@ -99,30 +122,37 @@ def main():
             "is_correct": is_correct,
         })
 
-    # 8. Calculate overall accuracy
+    # 9. Calculate overall accuracy
     total_processed = len(results)
     correct_count = sum(1 for r in results if r["is_correct"])
     incorrect_count = total_processed - correct_count
     accuracy = (correct_count / total_processed * 100) if total_processed > 0 else 0.0
 
-    # 9. Save all experiment results to results/baseline_results.csv
+    # 8 & 10. Save results separately without overwriting other experiment files
     results_dir = os.path.join(os.path.dirname(__file__), "results")
     os.makedirs(results_dir, exist_ok=True)
-    results_csv_path = os.path.join(results_dir, "baseline_results.csv")
+    output_filename = OUTPUT_FILES[technique]
+    results_csv_path = os.path.join(results_dir, output_filename)
 
     results_df = pd.DataFrame(results)
     results_df.to_csv(results_csv_path, index=False)
     print(f"\nResults successfully saved to: {results_csv_path}")
 
-    # 10. Print experiment summary
-    print("\n" + "=" * 55)
-    print("EXPERIMENT SUMMARY: BASELINE MATHEMATICAL REASONING")
-    print("=" * 55)
+    # 9. Print experiment summary
+    print("\n" + "=" * 60)
+    print(f"EXPERIMENT SUMMARY: {experiment_title} REASONING")
+    print("=" * 60)
     print(f"Total questions processed: {total_processed}")
     print(f"Correct answers:           {correct_count}")
     print(f"Incorrect answers:         {incorrect_count}")
     print(f"Accuracy percentage:       {accuracy:.2f}%")
-    print("=" * 55)
+    print("=" * 60)
+
+
+def main():
+    # Defaults to 'step_by_step'; can also be passed via CLI argument: python main.py baseline
+    technique = sys.argv[1] if len(sys.argv) > 1 else "step_by_step"
+    run_experiment(technique=technique, num_questions=20)
 
 
 if __name__ == "__main__":
