@@ -275,8 +275,9 @@ if __name__ == "__main__":
     base_file = os.path.join(os.path.dirname(__file__), "results", "baseline_results.csv")
     sbs_file = os.path.join(os.path.dirname(__file__), "results", "step_by_step_results.csv")
     few_shot_file = os.path.join(os.path.dirname(__file__), "results", "few_shot_results.csv")
+    structured_file = os.path.join(os.path.dirname(__file__), "results", "structured_results.csv")
 
-    for f in [base_file, sbs_file, few_shot_file]:
+    for f in [base_file, sbs_file, few_shot_file, structured_file]:
         if os.path.exists(f):
             res = reevaluate_results_file(f)
             if res:

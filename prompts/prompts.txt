@@ -31,3 +31,13 @@ Final Answer: 40
 
 Now solve this problem:
 Question: {question}
+
+=== Structured Prompt ===
+Solve the following mathematical problem using this exact format. Follow all five steps in order without skipping any:
+1. Understand the problem.
+2. Identify the given values.
+3. Determine the required mathematical operation.
+4. Perform calculations step by step.
+5. Clearly state the final numerical answer in this exact format: Final Answer: <number>
+
+Question: {question}

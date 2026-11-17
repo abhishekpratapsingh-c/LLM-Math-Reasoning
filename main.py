@@ -40,12 +40,22 @@ PROMPTS = {
         "Now solve this problem:\n"
         "Question: {question}"
     ),
+    "structured": (
+        "Solve the following mathematical problem using this exact format. Follow all five steps in order without skipping any:\n"
+        "1. Understand the problem.\n"
+        "2. Identify the given values.\n"
+        "3. Determine the required mathematical operation.\n"
+        "4. Perform calculations step by step.\n"
+        "5. Clearly state the final numerical answer in this exact format: Final Answer: <number>\n\n"
+        "Question: {question}"
+    ),
 }
 
 OUTPUT_FILES = {
     "baseline": "baseline_results.csv",
     "step_by_step": "step_by_step_results.csv",
     "few_shot": "few_shot_results.csv",
+    "structured": "structured_results.csv",
 }
 
 
