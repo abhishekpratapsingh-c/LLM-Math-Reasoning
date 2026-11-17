@@ -214,7 +214,17 @@ def compare_answers(predicted: str, correct: str) -> bool:
 def reevaluate_results_file(csv_path: str):
     """
     Recalculates predictions and correctness for an existing results CSV without making API calls.
-    Returns (original_accuracy, new_accuracy, changes_list).
+    Returns a dict of original and new accuracy stats plus a list of changed rows.
+
+    Fix B -- API error handling:
+        Rows where is_api_error=True are preserved as-is (empty predicted_answer,
+        is_correct=False) and are excluded from the accuracy denominator so API
+        failures are never counted as model mistakes.
+
+    Backward compatibility:
+        Files that predate the is_api_error column (the 20-question CSVs) work
+        unchanged.  The column is added with value False for all rows when such a
+        file is re-evaluated, making it forward-compatible with the new schema.
     """
     if not os.path.exists(csv_path):
         print(f"Error: File not found at {csv_path}")
@@ -222,21 +232,45 @@ def reevaluate_results_file(csv_path: str):
 
     df = pd.read_csv(csv_path)
     orig_total = len(df)
-    orig_correct = sum(1 for v in df["is_correct"] if str(v).lower() in ["true", "1"])
-    orig_accuracy = (orig_correct / orig_total * 100) if orig_total > 0 else 0.0
+
+    # Backward compat: add is_api_error=False for files that predate this column
+    if "is_api_error" not in df.columns:
+        df["is_api_error"] = False
+
+    # Normalize to Python bool regardless of how the value was serialized
+    df["is_api_error"] = df["is_api_error"].fillna(False).apply(
+        lambda x: str(x).lower() in ["true", "1"]
+    )
+
+    orig_api_errors = int(df["is_api_error"].sum())
+    orig_valid      = orig_total - orig_api_errors
+
+    # Original correct count -- only among valid (non-error) responses
+    orig_correct = int(
+        df.loc[~df["is_api_error"], "is_correct"]
+        .apply(lambda x: str(x).lower() in ["true", "1"])
+        .sum()
+    )
+    orig_accuracy = (orig_correct / orig_valid * 100) if orig_valid > 0 else 0.0
 
     changes = []
     updated_predictions = []
     updated_is_correct = []
 
     for idx, row in df.iterrows():
-        old_pred = str(row["predicted_answer"])
-        old_correct = bool(str(row["is_correct"]).lower() in ["true", "1"])
+        old_pred    = str(row["predicted_answer"])
+        old_correct = str(row["is_correct"]).lower() in ["true", "1"]
+        is_error    = bool(row["is_api_error"])
         raw_response = str(row["model_response"])
         ground_truth = extract_ground_truth(str(row["correct_answer"]))
 
-        new_pred = extract_model_answer(raw_response)
-        new_correct = compare_answers(new_pred, ground_truth)
+        if is_error:
+            # API error rows: keep empty prediction and is_correct=False unchanged
+            new_pred    = ""
+            new_correct = False
+        else:
+            new_pred    = extract_model_answer(raw_response)
+            new_correct = compare_answers(new_pred, ground_truth)
 
         updated_predictions.append(new_pred)
         updated_is_correct.append(new_correct)
@@ -250,19 +284,29 @@ def reevaluate_results_file(csv_path: str):
                 "new_predicted": new_pred,
                 "old_is_correct": old_correct,
                 "new_is_correct": new_correct,
+                "is_api_error": is_error,
             })
 
     df["predicted_answer"] = updated_predictions
-    df["is_correct"] = updated_is_correct
+    df["is_correct"]       = updated_is_correct
+    # Saving also persists the is_api_error column into older files
     df.to_csv(csv_path, index=False)
 
-    new_total = len(df)
-    new_correct = sum(updated_is_correct)
-    new_accuracy = (new_correct / new_total * 100) if new_total > 0 else 0.0
+    # API error classification never changes during re-evaluation
+    new_api_errors = orig_api_errors
+    new_valid      = orig_valid
+    new_correct    = int(
+        df.loc[~df["is_api_error"], "is_correct"]
+        .apply(lambda x: bool(x))
+        .sum()
+    )
+    new_accuracy = (new_correct / new_valid * 100) if new_valid > 0 else 0.0
 
     return {
         "file": csv_path,
-        "total": new_total,
+        "total": orig_total,
+        "api_errors": new_api_errors,
+        "valid": new_valid,
         "orig_correct": orig_correct,
         "orig_accuracy": orig_accuracy,
         "new_correct": new_correct,
@@ -272,18 +316,37 @@ def reevaluate_results_file(csv_path: str):
 
 
 if __name__ == "__main__":
-    base_file = os.path.join(os.path.dirname(__file__), "results", "baseline_results.csv")
-    sbs_file = os.path.join(os.path.dirname(__file__), "results", "step_by_step_results.csv")
-    few_shot_file = os.path.join(os.path.dirname(__file__), "results", "few_shot_results.csv")
+    base_file       = os.path.join(os.path.dirname(__file__), "results", "baseline_results.csv")
+    sbs_file        = os.path.join(os.path.dirname(__file__), "results", "step_by_step_results.csv")
+    few_shot_file   = os.path.join(os.path.dirname(__file__), "results", "few_shot_results.csv")
     structured_file = os.path.join(os.path.dirname(__file__), "results", "structured_results.csv")
 
-    for f in [base_file, sbs_file, few_shot_file, structured_file]:
+    # 300-question test-split results
+    base_300_file       = os.path.join(os.path.dirname(__file__), "results", "baseline_300_results.csv")
+    sbs_300_file        = os.path.join(os.path.dirname(__file__), "results", "step_by_step_300_results.csv")
+    few_shot_300_file   = os.path.join(os.path.dirname(__file__), "results", "few_shot_300_results.csv")
+    structured_300_file = os.path.join(os.path.dirname(__file__), "results", "structured_300_results.csv")
+
+    all_files = [
+        base_file, sbs_file, few_shot_file, structured_file,
+        base_300_file, sbs_300_file, few_shot_300_file, structured_300_file,
+    ]
+
+    for f in all_files:
         if os.path.exists(f):
             res = reevaluate_results_file(f)
             if res:
-                print(f"Results for {os.path.basename(res['file'])}:")
-                print(f"  Original Accuracy: {res['orig_accuracy']:.2f}% ({res['orig_correct']}/{res['total']})")
-                print(f"  New Accuracy:      {res['new_accuracy']:.2f}% ({res['new_correct']}/{res['total']})")
-                print(f"  Changes ({len(res['changes'])}):")
-                for c in res['changes']:
-                    print(f"    Q{c['index']}: '{c['old_predicted']}' ({c['old_is_correct']}) -> '{c['new_predicted']}' ({c['new_is_correct']})")
+                api_note = f" ({res['api_errors']} API errors excluded)" if res["api_errors"] > 0 else ""
+                print(f"\nResults for {os.path.basename(res['file'])}:")
+                print(f"  Total questions:    {res['total']}")
+                print(f"  API errors:         {res['api_errors']}")
+                print(f"  Valid responses:    {res['valid']}")
+                print(f"  Correct answers:    {res['new_correct']}")
+                print(f"  Incorrect answers:  {res['valid'] - res['new_correct']}")
+                print(f"  Original Accuracy:  {res['orig_accuracy']:.2f}%{api_note}")
+                print(f"  New Accuracy:       {res['new_accuracy']:.2f}%{api_note}")
+                if res["changes"]:
+                    print(f"  Changes ({len(res['changes'])}):")
+                    for c in res["changes"]:
+                        err_tag = " [API ERROR]" if c.get("is_api_error") else ""
+                        print(f"    Q{c['index']}: '{c['old_predicted']}' ({c['old_is_correct']}) -> '{c['new_predicted']}' ({c['new_is_correct']}){err_tag}")

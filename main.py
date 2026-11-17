@@ -31,11 +31,11 @@ PROMPTS = {
         "Step 3: Multiply the number of boxes by the chocolates per box: 5 * 4 = 20 chocolates.\n"
         "Final Answer: 20\n\n"
         "Example 2:\n"
-        "Question: A person buys a notebook for ₹30 and a pen for ₹10. What is the total cost of the purchase?\n"
+        "Question: A person buys a notebook for \u20b930 and a pen for \u20b910. What is the total cost of the purchase?\n"
         "Solution:\n"
-        "Step 1: Identify the cost of the notebook: ₹30.\n"
-        "Step 2: Identify the cost of the pen: ₹10.\n"
-        "Step 3: Add the cost of both items: 30 + 10 = ₹40.\n"
+        "Step 1: Identify the cost of the notebook: \u20b930.\n"
+        "Step 2: Identify the cost of the pen: \u20b910.\n"
+        "Step 3: Add the cost of both items: 30 + 10 = \u20b940.\n"
         "Final Answer: 40\n\n"
         "Now solve this problem:\n"
         "Question: {question}"
@@ -52,22 +52,98 @@ PROMPTS = {
 }
 
 OUTPUT_FILES = {
-    "baseline": "baseline_results.csv",
-    "step_by_step": "step_by_step_results.csv",
-    "few_shot": "few_shot_results.csv",
-    "structured": "structured_results.csv",
+    "baseline":         "baseline_results.csv",
+    "step_by_step":     "step_by_step_results.csv",
+    "few_shot":         "few_shot_results.csv",
+    "structured":       "structured_results.csv",
+    # 300-question test-split variants (gsm8k_test_300.csv)
+    "baseline_300":     "baseline_300_results.csv",
+    "step_by_step_300": "step_by_step_300_results.csv",
+    "few_shot_300":     "few_shot_300_results.csv",
+    "structured_300":   "structured_300_results.csv",
 }
 
+# Required columns in every results CSV (used for validation on resume)
+_REQUIRED_COLS = {"question", "correct_answer", "model_response", "predicted_answer", "is_correct"}
 
-def run_experiment(technique: str = "step_by_step", num_questions: int = 20):
+
+def _save_results_safely(results: list, csv_path: str) -> bool:
+    """
+    Writes the results list to csv_path via a temporary file, then renames it.
+
+    Writing to a temp file first means the original csv_path is never left in a
+    partially written state: os.replace() on Windows replaces the target in one
+    filesystem operation, so a crash during writing at worst leaves a stale .tmp
+    file (which is cleaned up on the next attempt) while the original CSV is intact.
+
+    Returns True on success, False on failure (the original file is preserved).
+    """
+    tmp_path = csv_path + ".tmp"
+    try:
+        pd.DataFrame(results).to_csv(tmp_path, index=False)
+        os.replace(tmp_path, csv_path)
+        return True
+    except Exception as e:
+        print(f"  WARNING: Could not write results to disk: {e}")
+        # Remove the incomplete temp file so it cannot be mistaken for valid data
+        try:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+        except Exception:
+            pass
+        return False
+
+
+def run_experiment(technique: str = "step_by_step", num_questions: int = None):
     """
     Executes a mathematical reasoning experiment on GSM8K using a specified prompting technique.
+
+    Techniques ending in '_300' automatically use the 300-question test split
+    (data/gsm8k_test_300.csv) with the corresponding base prompt template.
+    All other techniques use the first 20 questions from data/gsm8k_data.csv.
+
+    Resume behaviour
+    ----------------
+    If the output CSV already exists it is validated then split into two groups:
+      - Successful rows (is_api_error=False): loaded into memory and kept as-is;
+        the corresponding questions are skipped in the main loop.
+      - Failed rows (is_api_error=True): their questions are RE-ATTEMPTED; the old
+        failed row is replaced in memory by the new result so the CSV always
+        contains exactly one row per question.
+    If the existing file is unreadable or missing required columns the experiment
+    stops immediately with a clear error -- the file is never overwritten.
+
+    Safe writes
+    -----------
+    Every per-question save goes through _save_results_safely(), which writes to
+    a .tmp file first and then renames it, so the main CSV is never left partially
+    written.  The in-memory list is the single source of truth; it is rewritten in
+    full after each question.
     """
-    if technique not in PROMPTS:
-        print(f"Error: Unknown technique '{technique}'. Available: {list(PROMPTS.keys())}")
+    if technique not in OUTPUT_FILES:
+        print(f"Error: Unknown technique '{technique}'. Available: {list(OUTPUT_FILES.keys())}")
         return
 
-    # 3 & 13. Load environment variables securely (API key is never printed or hardcoded)
+    # Determine whether this is a _300 scale-up run
+    is_scale_300 = technique.endswith("_300")
+    base_technique = technique[:-4] if is_scale_300 else technique  # strip '_300' suffix
+
+    if base_technique not in PROMPTS:
+        print(f"Error: No prompt template found for base technique '{base_technique}'.")
+        return
+
+    # Set dataset path and question count based on run type
+    if is_scale_300:
+        data_file = "gsm8k_test_300.csv"
+        default_questions = 300
+    else:
+        data_file = "gsm8k_data.csv"
+        default_questions = 20
+
+    if num_questions is None:
+        num_questions = default_questions
+
+    # Load environment variables securely (API key never printed or hardcoded)
     load_dotenv()
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
@@ -75,17 +151,22 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = 20):
         print("Please ensure your key is added to .env as: GROQ_API_KEY=<your_key>")
         return
 
-    # Configure Groq client using OpenAI SDK
+    # Configure Groq client via OpenAI-compatible SDK
     client = OpenAI(
         api_key=api_key,
         base_url="https://api.groq.com/openai/v1",
     )
 
-    # 2. Consistent model specification across experiments
     model_name = "openai/gpt-oss-120b"
 
-    # 1. Read first 20 questions from data/gsm8k_data.csv (unchanged)
-    data_path = os.path.join(os.path.dirname(__file__), "data", "gsm8k_data.csv")
+    # Resolve output path early -- needed for resume check and safe writes
+    results_dir = os.path.join(os.path.dirname(__file__), "results")
+    os.makedirs(results_dir, exist_ok=True)
+    output_filename = OUTPUT_FILES[technique]
+    results_csv_path = os.path.join(results_dir, output_filename)
+
+    # Load dataset
+    data_path = os.path.join(os.path.dirname(__file__), "data", data_file)
     try:
         df = pd.read_csv(data_path)
         if df.empty or "question" not in df.columns or "answer" not in df.columns:
@@ -93,6 +174,8 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = 20):
             return
     except FileNotFoundError:
         print(f"Error: Could not find dataset at '{data_path}'.")
+        if is_scale_300:
+            print("Hint: Run 'python prepare_test_data.py' first to generate the 300-question test dataset.")
         return
     except Exception as e:
         print(f"Error reading dataset: {e}")
@@ -100,89 +183,185 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = 20):
 
     df_subset = df.head(num_questions)
     experiment_title = technique.replace("_", " ").upper()
-    print(f"Starting {experiment_title} Experiment ({len(df_subset)} questions) using model '{model_name}'...\n")
 
-    results = []
-    prompt_template = PROMPTS[technique]
+    # ------------------------------------------------------------------
+    # Resume logic
+    # ------------------------------------------------------------------
+    # in_memory_results: the single source of truth for what goes into the CSV.
+    # Seeded from previously successful rows; grows as new questions are processed.
+    in_memory_results: list = []
+    already_done_questions: set = set()   # successful -- skip entirely
+    retry_questions: set = set()          # previous API error -- re-attempt
+
+    if os.path.exists(results_csv_path):
+        # Fix 1 -- Corrupted CSV protection:
+        # Any read failure or missing required column is a hard stop.
+        # We never overwrite or silently discard the existing file.
+        try:
+            existing_df = pd.read_csv(results_csv_path)
+        except Exception as e:
+            print(f"Error: Could not read existing results file at '{results_csv_path}'.")
+            print(f"  Reason: {e}")
+            print("Stopping to protect existing data. Inspect or rename the file before retrying.")
+            return
+
+        missing_cols = _REQUIRED_COLS - set(existing_df.columns)
+        if missing_cols:
+            print(f"Error: Existing results file is missing required columns: {missing_cols}")
+            print("Stopping to protect existing data. Inspect or rename the file before retrying.")
+            return
+
+        # Normalise is_api_error (backward compat: older files without this column)
+        if "is_api_error" not in existing_df.columns:
+            existing_df["is_api_error"] = False
+        existing_df["is_api_error"] = (
+            existing_df["is_api_error"]
+            .fillna(False)
+            .apply(lambda x: str(x).lower() in ["true", "1"])
+        )
+
+        success_mask = ~existing_df["is_api_error"]
+
+        # Fix 2 -- Retry API failures:
+        # Successful rows are kept in memory and their questions are skipped.
+        # Failed rows are DROPPED from memory; their questions will be re-attempted
+        # and the new result replaces the old row (no duplicates).
+        successful_df = existing_df[success_mask].copy()
+        failed_df     = existing_df[~success_mask].copy()
+
+        in_memory_results      = successful_df.to_dict("records")
+        already_done_questions = set(successful_df["question"].astype(str).str.strip())
+        retry_questions        = set(failed_df["question"].astype(str).str.strip())
+
+        n_done  = len(already_done_questions)
+        n_retry = len(retry_questions)
+        n_new   = max(0, num_questions - n_done - n_retry)
+        print(f"Resuming {experiment_title}:")
+        print(f"  Completed (skipping):  {n_done}")
+        print(f"  API errors (retrying): {n_retry}")
+        print(f"  New questions:         {n_new}")
+        print()
+    # ------------------------------------------------------------------
+
+    print(f"Starting {experiment_title} Experiment ({len(df_subset)} questions total) "
+          f"using model '{model_name}'...\n")
+
+    prompt_template = PROMPTS[base_technique]
+    error_count = 0
 
     for idx, row in df_subset.iterrows():
         question = str(row["question"]).strip()
-        raw_answer = str(row["answer"])
 
-        # Ground truth extraction (using evaluate.py)
+        # Skip questions that already have a successful saved result
+        if question in already_done_questions:
+            print(f"[{experiment_title}] [{idx + 1}/{len(df_subset)}] Already completed. Skipping.")
+            continue
+
+        is_retry = question in retry_questions
+        action_label = "Retrying previous API error" if is_retry else "Processing question"
+        print(f"[{experiment_title}] [{idx + 1}/{len(df_subset)}] {action_label}...")
+
+        raw_answer     = str(row["answer"])
         correct_answer = extract_ground_truth(raw_answer)
+        prompt         = prompt_template.format(question=question)
 
-        # 4. Construct prompt for current question
-        prompt = prompt_template.format(question=question)
-
-        print(f"[{idx + 1}/{len(df_subset)}] Processing question...")
-
+        # API call
+        is_api_error   = False
         model_response = ""
-        # 5 & 13. Call Groq API with robust error handling
         try:
             response = client.chat.completions.create(
                 model=model_name,
-                messages=[
-                    {"role": "user", "content": prompt},
-                ],
+                messages=[{"role": "user", "content": prompt}],
                 temperature=0.0,
             )
             model_response = response.choices[0].message.content or ""
         except APIStatusError as e:
-            print(f"  API Status Error on question {idx + 1} (Status {e.status_code}): {e.response.text}")
+            print(f"  WARNING: API error on Q{idx + 1} (HTTP {e.status_code}): {e.response.text}")
             model_response = f"API_ERROR: HTTP {e.status_code}"
+            is_api_error   = True
+            error_count   += 1
         except Exception as e:
-            print(f"  Unexpected error on question {idx + 1}: {e}")
+            print(f"  WARNING: Unexpected error on Q{idx + 1}: {e}")
             model_response = f"ERROR: {e}"
+            is_api_error   = True
+            error_count   += 1
 
-        # 7. Reuse corrected answer extraction logic from evaluate.py
-        predicted_answer = extract_model_answer(model_response)
+        # Skip answer extraction for API errors -- no parseable response exists
+        predicted_answer = "" if is_api_error else extract_model_answer(model_response)
+        is_correct       = False if is_api_error else compare_answers(predicted_answer, correct_answer)
 
-        # Compare predicted answer with ground truth
-        is_correct = compare_answers(predicted_answer, correct_answer)
-
-        print(f"  Predicted: '{predicted_answer}' | Correct: '{correct_answer}' | Match: {is_correct}")
-
-        # 6. Save experiment fields
-        results.append({
-            "question": question,
-            "correct_answer": correct_answer,
-            "model_response": model_response,
+        result_row = {
+            "question":        question,
+            "correct_answer":  correct_answer,
+            "model_response":  model_response,
             "predicted_answer": predicted_answer,
-            "is_correct": is_correct,
-        })
+            "is_correct":      is_correct,
+            "is_api_error":    is_api_error,
+        }
 
-    # 9. Calculate overall accuracy
-    total_processed = len(results)
-    correct_count = sum(1 for r in results if r["is_correct"])
-    incorrect_count = total_processed - correct_count
-    accuracy = (correct_count / total_processed * 100) if total_processed > 0 else 0.0
+        # Append to the in-memory list (retry questions naturally replace nothing
+        # because their old failed row was excluded when we seeded in_memory_results)
+        in_memory_results.append(result_row)
 
-    # 8 & 10. Save results separately without overwriting other experiment files
-    results_dir = os.path.join(os.path.dirname(__file__), "results")
-    os.makedirs(results_dir, exist_ok=True)
-    output_filename = OUTPUT_FILES[technique]
-    results_csv_path = os.path.join(results_dir, output_filename)
+        # Fix 3 -- Safe write: rewrite the full in-memory list via a temp file.
+        # The original CSV is never left in a partially written state.
+        if not _save_results_safely(in_memory_results, results_csv_path):
+            print(f"\nCRITICAL ERROR: Failed to save results to '{results_csv_path}' on Q{idx + 1}.")
+            print("Stopping experiment immediately to prevent loss of unsaved progress and unnecessary API calls.")
+            print("Existing saved results are intact. Please resolve disk/permission issues and restart.")
+            return
 
-    results_df = pd.DataFrame(results)
-    results_df.to_csv(results_csv_path, index=False)
-    print(f"\nResults successfully saved to: {results_csv_path}")
+        status_tag = "API ERROR -- excluded from accuracy" if is_api_error else f"Match: {is_correct}"
+        print(f"  Predicted: '{predicted_answer}' | Correct: '{correct_answer}' | {status_tag}")
 
-    # 9. Print experiment summary
+    # ------------------------------------------------------------------
+    # Final summary: read the complete on-disk CSV so totals always reflect
+    # the full file, including any rows from prior resumed runs.
+    # ------------------------------------------------------------------
+    print(f"\nAll questions processed. Reading final results from: {results_csv_path}")
+    try:
+        final_df = pd.read_csv(results_csv_path)
+    except Exception as e:
+        print(f"Error reading final results for summary: {e}")
+        return
+
+    total_in_file = len(final_df)
+
+    if "is_api_error" in final_df.columns:
+        is_error_mask = final_df["is_api_error"].fillna(False).apply(
+            lambda x: str(x).lower() in ["true", "1"]
+        )
+    else:
+        is_error_mask = pd.Series([False] * total_in_file, index=final_df.index)
+
+    api_errors      = int(is_error_mask.sum())
+    valid_responses = total_in_file - api_errors
+
+    is_correct_mask = final_df["is_correct"].apply(lambda x: str(x).lower() in ["true", "1"])
+    correct_count   = int((is_correct_mask & ~is_error_mask).sum())
+    incorrect_count = valid_responses - correct_count
+    accuracy        = (correct_count / valid_responses * 100) if valid_responses > 0 else 0.0
+
     print("\n" + "=" * 60)
     print(f"EXPERIMENT SUMMARY: {experiment_title} REASONING")
     print("=" * 60)
-    print(f"Total questions processed: {total_processed}")
+    print(f"Total questions in file:   {total_in_file}")
+    print(f"API errors:                {api_errors}")
+    print(f"Valid model responses:     {valid_responses}")
     print(f"Correct answers:           {correct_count}")
     print(f"Incorrect answers:         {incorrect_count}")
-    print(f"Accuracy percentage:       {accuracy:.2f}%")
+    print(f"Accuracy (valid only):     {accuracy:.2f}%")
+    if api_errors > 0:
+        print(f"NOTE: {api_errors} API error row(s) saved in CSV but excluded from accuracy.")
     print("=" * 60)
 
 
 def main():
-    # Defaults to 'step_by_step'; can also be passed via CLI argument: python main.py baseline
+    # Technique is passed via CLI: python main.py <technique>
+    # e.g.: python main.py baseline          -> 20 questions, gsm8k_data.csv
+    #        python main.py baseline_300      -> 300 questions, gsm8k_test_300.csv
     technique = sys.argv[1] if len(sys.argv) > 1 else "step_by_step"
-    run_experiment(technique=technique, num_questions=20)
+    run_experiment(technique=technique)  # num_questions auto-set based on technique suffix
 
 
 if __name__ == "__main__":
