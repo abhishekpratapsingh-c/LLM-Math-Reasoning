@@ -1,0 +1,461 @@
+question,correct_answer,model_response,predicted_answer,is_correct
+"Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?",72,"Natalia sold clips to 48 friends in April.  
+In May she sold **half as many** clips as she did in April:
+
+\[
+\frac{1}{2}\times 48 = 24 \text{ clips}
+\]
+
+Total clips sold in the two months:
+
+\[
+48 + 24 = 72
+\]
+
+\[
+\boxed{72}
+\]",72,True
+"Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?",10,"Weng’s rate is \$12 per hour.
+
+She worked \(50\) minutes, which is  
+
+\[
+\frac{50}{60} = \frac{5}{6}\text{ hour}.
+\]
+
+Earnings:
+
+\[
+12 \times \frac{5}{6}= 12 \times 0.833\ldots = 10.
+\]
+
+\[
+\boxed{\$10}
+\]",10,True
+"Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?",5,"The wallet costs  
+
+\[
+\$100
+\]
+
+Betty already has half of that amount:
+
+\[
+\frac12 \times 100 = \$50
+\]
+
+Her parents give her  
+
+\[
+\$15
+\]
+
+Her grandparents give twice as much as the parents:
+
+\[
+2 \times 15 = \$30
+\]
+
+Total money Betty will have after receiving the gifts:
+
+\[
+50 + 15 + 30 = \$95
+\]
+
+The amount still needed to reach the price of the wallet is
+
+\[
+100 - 95 = \$5
+\]
+
+\[
+\boxed{\$5}
+\]",5,True
+"Julie is reading a 120-page book. Yesterday, she was able to read 12 pages and today, she read twice as many pages as yesterday. If she wants to read half of the remaining pages tomorrow, how many pages should she read?",42,"The book has \(120\) pages.
+
+1. **Pages read yesterday:**  
+   \(12\) pages.
+
+2. **Pages read today:**  
+   She read twice as many as yesterday:  
+   \(2 \times 12 = 24\) pages.
+
+3. **Total pages read so far:**  
+   \(12 + 24 = 36\) pages.
+
+4. **Pages still left to read:**  
+   \(120 - 36 = 84\) pages.
+
+5. **Pages she wants to read tomorrow:**  
+   Half of the remaining pages:  
+   \(\frac{84}{2} = 42\) pages.
+
+\[
+\boxed{42}
+\]",42,True
+James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?,624,"Each week James writes  
+
+- 2 friends × 2 letters per friend = **4 letters**  
+- Each letter is 3 pages → 4 × 3 = **12 pages per week**  
+
+There are 52 weeks in a year, so  
+
+\(12 \text{ pages/week} \times 52 \text{ weeks} = 624 \text{ pages}\).
+
+**Answer: 624 pages.**",624,True
+"Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?",35,"Let  
+
+* \(Y\) = number of yellow flowers  
+* \(P\) = number of purple flowers  
+* \(G\) = number of green flowers  
+
+We are given:
+
+1. \(Y = 10\).
+
+2. “There are 80 % more of those in purple.”  
+   This means the purple count is 80 % larger than the yellow count:
+
+\[
+P = Y + 0.80Y = 1.80Y = 1.8 \times 10 = 18 .
+\]
+
+3. “There are only 25 % as many green flowers as there are yellow and purple flowers.”  
+   So the green count is one‑quarter of the sum of yellow and purple:
+
+\[
+G = 0.25\,(Y+P) = 0.25\,(10+18) = 0.25 \times 28 = 7 .
+\]
+
+Now add the three colors:
+
+\[
+\text{Total flowers}= Y + P + G = 10 + 18 + 7 = 35 .
+\]
+
+\[
+\boxed{35}
+\]",35,True
+"Albert is wondering how much pizza he can eat in one day. He buys 2 large pizzas and 2 small pizzas. A large pizza has 16 slices and a small pizza has 8 slices. If he eats it all, how many pieces does he eat that day?",48,"Albert has  
+
+- 2 large pizzas × 16 slices each = **32 slices**  
+- 2 small pizzas × 8 slices each = **16 slices**
+
+Adding them together:
+
+\(32 + 16 = 48\)
+
+So, if he eats all the pizza, Albert eats **48 pieces (slices)** that day.",48,True
+"Ken created a care package to send to his brother, who was away at boarding school.  Ken placed a box on a scale, and then he poured into the box enough jelly beans to bring the weight to 2 pounds.  Then, he added enough brownies to cause the weight to triple.  Next, he added another 2 pounds of jelly beans.  And finally, he added enough gummy worms to double the weight once again.  What was the final weight of the box of goodies, in pounds?",16,"Ken first filled the box until the total weight (box + jelly beans) was **2 lb**.  
+He then added brownies that tripled the weight:  
+
+\[
+2\text{ lb} \times 3 = 6\text{ lb}
+\]
+
+Next he added another **2 lb** of jelly beans:
+
+\[
+6\text{ lb} + 2\text{ lb} = 8\text{ lb}
+\]
+
+Finally he added gummy worms that doubled the weight:
+
+\[
+8\text{ lb} \times 2 = 16\text{ lb}
+\]
+
+\[
+\boxed{16}
+\]",16,True
+"Alexis is applying for a new job and bought a new set of business clothes to wear to the interview. She went to a department store with a budget of $200 and spent $30 on a button-up shirt, $46 on suit pants, $38 on a suit coat, $11 on socks, and $18 on a belt. She also purchased a pair of shoes, but lost the receipt for them. She has $16 left from her budget. How much did Alexis pay for the shoes?",41,"Alexis’s total budget was \$200 and she has \$16 left, so she spent  
+
+\[
+200 - 16 = \$184
+\]
+
+on clothing.
+
+The amounts she knows she paid are  
+
+\[
+30 + 46 + 38 + 11 + 18 = \$143
+\]
+
+Therefore, the cost of the shoes is  
+
+\[
+184 - 143 = \boxed{\$41}
+\]",41,True
+"Tina makes $18.00 an hour.  If she works more than 8 hours per shift, she is eligible for overtime, which is paid by your hourly wage + 1/2 your hourly wage.  If she works 10 hours every day for 5 days, how much money does she make?",990,"Tina’s pay is calculated in two parts each day:
+
+* **Regular hours:** 8 hours at \$18/hour  
+  \(8 \times 18 = \$144\)
+
+* **Overtime hours:** 2 hours (the hours beyond 8) at “time‑and‑a‑half”  
+  Overtime rate = \(18 + \frac12(18) = 1.5 \times 18 = \$27\) per hour  
+  \(2 \times 27 = \$54\)
+
+**Total per day:**  
+\(\$144 + \$54 = \$198\)
+
+She works 5 days, so:
+
+\[
+5 \times 198 = \$990
+\]
+
+\[
+\boxed{\$990}
+\]",990,True
+"A deep-sea monster rises from the waters once every hundred years to feast on a ship and sate its hunger. Over three hundred years, it has consumed 847 people. Ships have been built larger over time, so each new ship has twice as many people as the last ship. How many people were on the ship the monster ate in the first hundred years?",121,"Let the number of people on the first ship be \(x\).
+
+Since each later ship has twice as many people as the previous one, the numbers of people on the three ships are  
+
+\[
+\text{1st ship}: x,\qquad 
+\text{2nd ship}: 2x,\qquad 
+\text{3rd ship}: 4x .
+\]
+
+The monster ate a total of 847 people over the three appearances, so
+
+\[
+x + 2x + 4x = 847 \;\Longrightarrow\; 7x = 847.
+\]
+
+Solving for \(x\):
+
+\[
+x = \frac{847}{7} = 121.
+\]
+
+\[
+\boxed{121}
+\]
+
+Thus, the ship the monster ate in the first hundred years carried **121 people**.",121,True
+"Tobias is buying a new pair of shoes that costs $95. He has been saving up his money each month for the past three months. He gets a $5 allowance a month. He also mows lawns and shovels driveways. He charges $15 to mow a lawn and $7 to shovel. After buying the shoes, he has $15 in change. If he mows 4 lawns, how many driveways did he shovel?",5,"Tobias’s total savings consist of:
+
+* Allowance for three months: \(3 \times \$5 = \$15\)
+* Money from mowing lawns: \(4 \text{ lawns} \times \$15 = \$60\)
+* Money from shoveling driveways: \(d \text{ driveways} \times \$7 = \$7d\)
+
+So his total amount of money before buying the shoes is  
+
+\[
+\$15 + \$60 + \$7d = \$75 + 7d.
+\]
+
+He buys shoes that cost \$95 and still has \$15 left, meaning he must have had  
+
+\[
+\$95 + \$15 = \$110
+\]
+
+before the purchase.
+
+Set the total savings equal to this amount:
+
+\[
+\$75 + 7d = \$110 \quad\Longrightarrow\quad 7d = 35 \quad\Longrightarrow\quad d = 5.
+\]
+
+\[
+\boxed{5}
+\]",5,True
+Randy has 60 mango trees on his farm. He also has 5 less than half as many coconut trees as mango trees. How many trees does Randy have in all on his farm?,85,"Randy has  
+
+- Mango trees: \(60\)  
+- Coconut trees: “half as many as mango trees, minus 5”.
+
+Half of the mango trees is \(\frac{1}{2}\times 60 = 30\).  
+Subtract 5: \(30 - 5 = 25\) coconut trees.
+
+Total trees on the farm:
+\[
+60 \text{ (mango)} + 25 \text{ (coconut)} = 85.
+\]
+
+\[
+\boxed{85}
+\]",85,True
+"Jasper will serve charcuterie at his dinner party. He buys 2 pounds of cheddar cheese for $10, a pound of cream cheese that cost half the price of the cheddar cheese, and a pack of cold cuts that cost twice the price of the cheddar cheese. How much does he spend on the ingredients?",35,"Jasper’s total spending is  
+
+\[
+\begin{aligned}
+\text{Cheddar cheese} &= \$10,\\[4pt]
+\text{Cream cheese} &= \tfrac12 \times (\text{price of cheddar}) = \tfrac12 \times \$10 = \$5,\\[4pt]
+\text{Cold cuts} &= 2 \times (\text{price of cheddar}) = 2 \times \$10 = \$20.
+\end{aligned}
+\]
+
+Adding them together:
+
+\[
+\$10 + \$5 + \$20 = \$35.
+\]
+
+\[
+\boxed{\$35}
+\]",35,True
+Joy can read 8 pages of a book in 20 minutes. How many hours will it take her to read 120 pages?,5,"Joy reads  
+
+\[
+\frac{8\text{ pages}}{20\text{ min}} = \frac{8}{20}=0.4\text{ pages/minute}.
+\]
+
+To read 120 pages, the required time in minutes is  
+
+\[
+\frac{120\text{ pages}}{0.4\text{ pages/min}} = 300\text{ minutes}.
+\]
+
+Convert minutes to hours:
+
+\[
+\frac{300\text{ min}}{60\text{ min/hour}} = 5\text{ hours}.
+\]
+
+\[
+\boxed{5\text{ hours}}
+\]",5,True
+James creates a media empire.  He creates a movie for $2000.  Each DVD cost $6 to make.  He sells it for 2.5 times that much.  He sells 500 movies a day for 5 days a week.  How much profit does he make in 20 weeks?,448000,"**Step‑by‑step calculation**
+
+1. **Cost to make the movie**  
+   \[
+   \text{Movie production cost}= \$2000
+   \]
+
+2. **Cost to make each DVD**  
+   \[
+   \text{Cost per DVD}= \$6
+   \]
+
+3. **Selling price of each DVD**  
+   He sells each DVD for \(2.5\) times its manufacturing cost:  
+   \[
+   \text{Selling price per DVD}=2.5 \times \$6 = \$15
+   \]
+
+4. **Number of DVDs sold per week**  
+   He sells \(500\) DVDs a day, \(5\) days a week:  
+   \[
+   500 \times 5 = 2500 \text{ DVDs/week}
+   \]
+
+5. **Number of DVDs sold in 20 weeks**  
+   \[
+   2500 \times 20 = 50{,}000 \text{ DVDs}
+   \]
+
+6. **Total revenue**  
+   \[
+   \text{Revenue}= 50{,}000 \times \$15 = \$750{,}000
+   \]
+
+7. **Total cost**  
+   * Production cost of the movie: \$2000  
+   * Manufacturing cost of DVDs: \(50{,}000 \times \$6 = \$300{,}000\)  
+
+   \[
+   \text{Total cost}= \$2000 + \$300{,}000 = \$302{,}000
+   \]
+
+8. **Profit**  
+   \[
+   \text{Profit}= \text{Revenue} - \text{Total cost}= \$750{,}000 - \$302{,}000 = \boxed{\$448{,}000}
+   \]
+
+So James makes **\$448,000** profit over the 20‑week period.",448000,True
+"The profit from a business transaction is shared among 2 business partners, Mike and Johnson in the ratio 2:5 respectively. If Johnson got $2500, how much will Mike have after spending some of his share on a shirt that costs $200?",800,"The profit is divided in the ratio  
+
+\[
+\text{Mike} : \text{Johnson}=2:5
+\]
+
+Let one “part’’ of the ratio be worth \(x\) dollars.  
+Then  
+
+\[
+5x = \text{Johnson’s share}= \$2500 \quad\Longrightarrow\quad x = \frac{2500}{5}= \$500
+\]
+
+Mike’s share is \(2x\):
+
+\[
+2x = 2 \times 500 = \$1000
+\]
+
+Mike spends \$200 on a shirt, so the amount he has left is  
+
+\[
+1000 - 200 = \$800
+\]
+
+\[
+\boxed{\$800}
+\]",800,True
+"In a truck, there are 26 pink hard hats, 15 green hard hats, and 24 yellow hard hats.  If Carl takes away 4 pink hard hats, and John takes away 6 pink hard hats and twice as many green hard hats as the number of pink hard hats that he removed, then calculate the total number of hard hats that remained in the truck.",43,"The truck originally contains  
+
+- Pink hats: \(26\)  
+- Green hats: \(15\)  
+- Yellow hats: \(24\)
+
+**Hats taken away**
+
+- Carl removes \(4\) pink hats.  
+- John removes \(6\) pink hats and, “twice as many green hats as the number of pink hats he removed,” i.e. \(2 \times 6 = 12\) green hats.
+
+**Remaining hats**
+
+- Pink: \(26 - (4 + 6) = 26 - 10 = 16\)  
+- Green: \(15 - 12 = 3\)  
+- Yellow: unchanged at \(24\)
+
+**Total remaining hats**
+
+\[
+16 + 3 + 24 = 43
+\]
+
+\[
+\boxed{43}
+\]",43,True
+It takes Roque two hours to walk to work and one hour to ride his bike to work. Roque walks to and from work three times a week and rides his bike to and from work twice a week. How many hours in total does he take to get to and from work a week with walking and biking?,16,"Roque’s commute times:
+
+- **Walking:** 2 hours each way → 4 hours for a round‑trip.  
+  He walks a round‑trip 3 times a week:  
+  \(3 \times 4 = 12\) hours.
+
+- **Biking:** 1 hour each way → 2 hours for a round‑trip.  
+  He bikes a round‑trip 2 times a week:  
+  \(2 \times 2 = 4\) hours.
+
+**Total weekly commuting time**
+
+\[
+12\text{ hours (walking)} + 4\text{ hours (biking)} = 16\text{ hours}.
+\]
+
+\[
+\boxed{16\text{ hours}}
+\]",16,True
+Tim rides his bike back and forth to work for each of his 5 workdays.  His work is 20 miles away.  He also goes for a weekend bike ride of 200 miles.    If he can bike at 25 mph how much time does he spend biking a week?,16,"Tim’s weekly biking distance:
+
+- **Commute:** 20 mi each way → 40 mi per workday.  
+  For 5 workdays: \(5 \times 40 = 200\) mi.
+- **Weekend ride:** 200 mi.
+
+Total distance per week:  
+\(200\ \text{mi (commute)} + 200\ \text{mi (weekend)} = 400\) mi.
+
+At a constant speed of 25 mph, the time spent biking is  
+
+\[
+\text{time} = \frac{\text{distance}}{\text{speed}} = \frac{400\ \text{mi}}{25\ \text{mph}} = 16\ \text{hours}.
+\]
+
+\[
+\boxed{16\text{ hours per week}}
+\]",16,True
