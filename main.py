@@ -2,14 +2,13 @@ import os
 import sys
 import pandas as pd
 from dotenv import load_dotenv
-from openai import OpenAI, APIStatusError
 
 # Ensure current directory is accessible for local module imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from evaluate import extract_ground_truth, extract_model_answer, compare_answers
 
 
-# Prompt templates for Phase 1 experiments
+# Prompt templates for Phase 1 experiments (preserved exactly)
 PROMPTS = {
     "baseline": (
         "Solve the following mathematical problem and provide the final answer.\n\n"
@@ -31,11 +30,11 @@ PROMPTS = {
         "Step 3: Multiply the number of boxes by the chocolates per box: 5 * 4 = 20 chocolates.\n"
         "Final Answer: 20\n\n"
         "Example 2:\n"
-        "Question: A person buys a notebook for \u20b930 and a pen for \u20b910. What is the total cost of the purchase?\n"
+        "Question: A person buys a notebook for ₹30 and a pen for ₹10. What is the total cost of the purchase?\n"
         "Solution:\n"
-        "Step 1: Identify the cost of the notebook: \u20b930.\n"
-        "Step 2: Identify the cost of the pen: \u20b910.\n"
-        "Step 3: Add the cost of both items: 30 + 10 = \u20b940.\n"
+        "Step 1: Identify the cost of the notebook: ₹30.\n"
+        "Step 2: Identify the cost of the pen: ₹10.\n"
+        "Step 3: Add the cost of both items: 30 + 10 = ₹40.\n"
         "Final Answer: 40\n\n"
         "Now solve this problem:\n"
         "Question: {question}"
@@ -51,16 +50,29 @@ PROMPTS = {
     ),
 }
 
+# Output filenames mapped by provider and technique
+# Groq outputs preserve existing filenames; Gemini outputs are prefixed with 'gemini_'
 OUTPUT_FILES = {
-    "baseline":         "baseline_results.csv",
-    "step_by_step":     "step_by_step_results.csv",
-    "few_shot":         "few_shot_results.csv",
-    "structured":       "structured_results.csv",
-    # 300-question test-split variants (gsm8k_test_300.csv)
-    "baseline_300":     "baseline_300_results.csv",
-    "step_by_step_300": "step_by_step_300_results.csv",
-    "few_shot_300":     "few_shot_300_results.csv",
-    "structured_300":   "structured_300_results.csv",
+    "groq": {
+        "baseline":         "baseline_results.csv",
+        "step_by_step":     "step_by_step_results.csv",
+        "few_shot":         "few_shot_results.csv",
+        "structured":       "structured_results.csv",
+        "baseline_300":     "baseline_300_results.csv",
+        "step_by_step_300": "step_by_step_300_results.csv",
+        "few_shot_300":     "few_shot_300_results.csv",
+        "structured_300":   "structured_300_results.csv",
+    },
+    "gemini": {
+        "baseline":         "gemini_baseline_results.csv",
+        "step_by_step":     "gemini_step_by_step_results.csv",
+        "few_shot":         "gemini_few_shot_results.csv",
+        "structured":       "gemini_structured_results.csv",
+        "baseline_300":     "gemini_baseline_300_results.csv",
+        "step_by_step_300": "gemini_step_by_step_300_results.csv",
+        "few_shot_300":     "gemini_few_shot_300_results.csv",
+        "structured_300":   "gemini_structured_300_results.csv",
+    },
 }
 
 # Required columns in every results CSV (used for validation on resume)
@@ -85,7 +97,6 @@ def _save_results_safely(results: list, csv_path: str) -> bool:
         return True
     except Exception as e:
         print(f"  WARNING: Could not write results to disk: {e}")
-        # Remove the incomplete temp file so it cannot be mistaken for valid data
         try:
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
@@ -94,10 +105,73 @@ def _save_results_safely(results: list, csv_path: str) -> bool:
         return False
 
 
-def run_experiment(technique: str = "step_by_step", num_questions: int = None):
+def get_llm_client(provider: str):
+    """
+    Initializes and returns (client, model_name) for the requested provider ('groq' or 'gemini').
+    Reads keys and configurable model names from environment variables.
+    """
+    load_dotenv()
+    if provider == "groq":
+        from openai import OpenAI
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "Missing 'GROQ_API_KEY' in environment or .env file.\n"
+                "Please ensure GROQ_API_KEY is configured."
+            )
+        model_name = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1",
+        )
+        return client, model_name
+
+    elif provider == "gemini":
+        from google import genai
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "Missing 'GEMINI_API_KEY' in environment or .env file.\n"
+                "Please ensure GEMINI_API_KEY is configured."
+            )
+        # Default to a verified, currently active Gemini text model; fully configurable via GEMINI_MODEL
+        model_name = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
+        client = genai.Client(api_key=api_key)
+        return client, model_name
+
+    else:
+        raise ValueError(f"Unsupported LLM_PROVIDER '{provider}'. Supported providers: 'groq', 'gemini'")
+
+
+def call_llm(client, provider: str, model_name: str, prompt: str) -> str:
+    """
+    Executes an LLM inference call using provider-native SDK with temperature=0.0.
+    Returns the string text generated by the model.
+    """
+    if provider == "groq":
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+        )
+        return response.choices[0].message.content or ""
+    elif provider == "gemini":
+        from google.genai import types
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(temperature=0.0),
+        )
+        return response.text or ""
+    else:
+        raise ValueError(f"Unknown provider '{provider}'")
+
+
+def run_experiment(technique: str = "step_by_step", num_questions: int = None, provider: str = None):
     """
     Executes a mathematical reasoning experiment on GSM8K using a specified prompting technique.
 
+    Provider can be specified via parameter or via LLM_PROVIDER in .env ('groq' or 'gemini').
     Techniques ending in '_300' automatically use the 300-question test split
     (data/gsm8k_test_300.csv) with the corresponding base prompt template.
     All other techniques use the first 20 questions from data/gsm8k_data.csv.
@@ -117,11 +191,20 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
     -----------
     Every per-question save goes through _save_results_safely(), which writes to
     a .tmp file first and then renames it, so the main CSV is never left partially
-    written.  The in-memory list is the single source of truth; it is rewritten in
-    full after each question.
+    written. If saving fails, the experiment halts immediately without making further
+    API calls.
     """
-    if technique not in OUTPUT_FILES:
-        print(f"Error: Unknown technique '{technique}'. Available: {list(OUTPUT_FILES.keys())}")
+    load_dotenv()
+    if provider is None:
+        provider = os.getenv("LLM_PROVIDER", "groq").lower().strip()
+
+    if provider not in OUTPUT_FILES:
+        print(f"Error: Unknown LLM_PROVIDER '{provider}'. Available: {list(OUTPUT_FILES.keys())}")
+        return
+
+    provider_output_map = OUTPUT_FILES[provider]
+    if technique not in provider_output_map:
+        print(f"Error: Unknown technique '{technique}'. Available: {list(provider_output_map.keys())}")
         return
 
     # Determine whether this is a _300 scale-up run
@@ -143,26 +226,17 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
     if num_questions is None:
         num_questions = default_questions
 
-    # Load environment variables securely (API key never printed or hardcoded)
-    load_dotenv()
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        print("Error: 'GROQ_API_KEY' not found in environment or .env file.")
-        print("Please ensure your key is added to .env as: GROQ_API_KEY=<your_key>")
+    # Initialize client and model for chosen provider
+    try:
+        client, model_name = get_llm_client(provider)
+    except Exception as e:
+        print(f"Error initializing client for provider '{provider}': {e}")
         return
-
-    # Configure Groq client via OpenAI-compatible SDK
-    client = OpenAI(
-        api_key=api_key,
-        base_url="https://api.groq.com/openai/v1",
-    )
-
-    model_name = "openai/gpt-oss-120b"
 
     # Resolve output path early -- needed for resume check and safe writes
     results_dir = os.path.join(os.path.dirname(__file__), "results")
     os.makedirs(results_dir, exist_ok=True)
-    output_filename = OUTPUT_FILES[technique]
+    output_filename = provider_output_map[technique]
     results_csv_path = os.path.join(results_dir, output_filename)
 
     # Load dataset
@@ -182,21 +256,17 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
         return
 
     df_subset = df.head(num_questions)
-    experiment_title = technique.replace("_", " ").upper()
+    experiment_title = f"{provider.upper()} - {technique.replace('_', ' ').upper()}"
 
     # ------------------------------------------------------------------
     # Resume logic
     # ------------------------------------------------------------------
-    # in_memory_results: the single source of truth for what goes into the CSV.
-    # Seeded from previously successful rows; grows as new questions are processed.
     in_memory_results: list = []
     already_done_questions: set = set()   # successful -- skip entirely
     retry_questions: set = set()          # previous API error -- re-attempt
 
     if os.path.exists(results_csv_path):
         # Fix 1 -- Corrupted CSV protection:
-        # Any read failure or missing required column is a hard stop.
-        # We never overwrite or silently discard the existing file.
         try:
             existing_df = pd.read_csv(results_csv_path)
         except Exception as e:
@@ -223,9 +293,6 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
         success_mask = ~existing_df["is_api_error"]
 
         # Fix 2 -- Retry API failures:
-        # Successful rows are kept in memory and their questions are skipped.
-        # Failed rows are DROPPED from memory; their questions will be re-attempted
-        # and the new result replaces the old row (no duplicates).
         successful_df = existing_df[success_mask].copy()
         failed_df     = existing_df[~success_mask].copy()
 
@@ -237,6 +304,8 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
         n_retry = len(retry_questions)
         n_new   = max(0, num_questions - n_done - n_retry)
         print(f"Resuming {experiment_title}:")
+        print(f"  Provider:              {provider}")
+        print(f"  Model:                 {model_name}")
         print(f"  Completed (skipping):  {n_done}")
         print(f"  API errors (retrying): {n_retry}")
         print(f"  New questions:         {n_new}")
@@ -244,7 +313,7 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
     # ------------------------------------------------------------------
 
     print(f"Starting {experiment_title} Experiment ({len(df_subset)} questions total) "
-          f"using model '{model_name}'...\n")
+          f"using provider '{provider}' and model '{model_name}'...\n")
 
     prompt_template = PROMPTS[base_technique]
     error_count = 0
@@ -269,20 +338,10 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
         is_api_error   = False
         model_response = ""
         try:
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0,
-            )
-            model_response = response.choices[0].message.content or ""
-        except APIStatusError as e:
-            print(f"  WARNING: API error on Q{idx + 1} (HTTP {e.status_code}): {e.response.text}")
-            model_response = f"API_ERROR: HTTP {e.status_code}"
-            is_api_error   = True
-            error_count   += 1
+            model_response = call_llm(client, provider, model_name, prompt)
         except Exception as e:
-            print(f"  WARNING: Unexpected error on Q{idx + 1}: {e}")
-            model_response = f"ERROR: {e}"
+            print(f"  WARNING: API/Provider error on Q{idx + 1}: {e}")
+            model_response = f"API_ERROR: {e}"
             is_api_error   = True
             error_count   += 1
 
@@ -345,6 +404,8 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
     print("\n" + "=" * 60)
     print(f"EXPERIMENT SUMMARY: {experiment_title} REASONING")
     print("=" * 60)
+    print(f"Provider:                  {provider}")
+    print(f"Model:                     {model_name}")
     print(f"Total questions in file:   {total_in_file}")
     print(f"API errors:                {api_errors}")
     print(f"Valid model responses:     {valid_responses}")
@@ -356,12 +417,85 @@ def run_experiment(technique: str = "step_by_step", num_questions: int = None):
     print("=" * 60)
 
 
+def test_single_question(provider: str = "gemini"):
+    """
+    Sends exactly ONE GSM8K question to the specified provider using the baseline prompt.
+    Prints:
+      - Selected provider
+      - Selected model
+      - Generated response
+      - API success or readable error
+    Does not save to or modify any results CSV.
+    """
+    load_dotenv()
+    print("=" * 60)
+    print("TEST MODE: SINGLE QUESTION RUN")
+    print("=" * 60)
+    print(f"Selected Provider: {provider}")
+
+    try:
+        client, model_name = get_llm_client(provider)
+        print(f"Selected Model:    {model_name}")
+    except Exception as e:
+        print(f"API Status:        ERROR initializing client: {e}")
+        return
+
+    # Load 1st question from test split (fallback to gsm8k_data.csv if test split is not found)
+    data_path = os.path.join(os.path.dirname(__file__), "data", "gsm8k_test_300.csv")
+    if not os.path.exists(data_path):
+        data_path = os.path.join(os.path.dirname(__file__), "data", "gsm8k_data.csv")
+
+    try:
+        df = pd.read_csv(data_path)
+        sample_q = str(df.iloc[0]["question"]).strip()
+        sample_a = str(df.iloc[0]["answer"]).strip()
+    except Exception as e:
+        print(f"API Status:        ERROR loading sample question from dataset: {e}")
+        return
+
+    correct_answer = extract_ground_truth(sample_a)
+    prompt = PROMPTS["baseline"].format(question=sample_q)
+
+    print(f"\nQuestion: {sample_q}")
+    print(f"Ground Truth Answer: {correct_answer}")
+    print("\nSending request to API...")
+
+    try:
+        response_text = call_llm(client, provider, model_name, prompt)
+        predicted_answer = extract_model_answer(response_text)
+        is_correct = compare_answers(predicted_answer, correct_answer)
+
+        print("\nAPI Status: SUCCESS")
+        print("-" * 60)
+        print("Generated Response:")
+        print(response_text.strip())
+        print("-" * 60)
+        print(f"Extracted Answer:  '{predicted_answer}'")
+        print(f"Ground Truth:      '{correct_answer}'")
+        print(f"Correct:           {is_correct}")
+    except Exception as e:
+        print(f"\nAPI Status: FAILED")
+        print(f"Readable Error: {e}")
+
+    print("=" * 60)
+
+
 def main():
-    # Technique is passed via CLI: python main.py <technique>
-    # e.g.: python main.py baseline          -> 20 questions, gsm8k_data.csv
-    #        python main.py baseline_300      -> 300 questions, gsm8k_test_300.csv
-    technique = sys.argv[1] if len(sys.argv) > 1 else "step_by_step"
-    run_experiment(technique=technique)  # num_questions auto-set based on technique suffix
+    # Usage:
+    #   python main.py test [gemini|groq]        -> Runs single-question test mode (no CSV output)
+    #   python main.py <technique>               -> Runs experiment with provider from LLM_PROVIDER
+    #   python main.py <technique> <provider>    -> Runs experiment with explicit provider
+    load_dotenv()
+    args = sys.argv[1:]
+
+    if args and args[0].lower() == "test":
+        provider = args[1].lower() if len(args) > 1 else os.getenv("LLM_PROVIDER", "gemini").lower().strip()
+        test_single_question(provider=provider)
+        return
+
+    technique = args[0] if len(args) > 0 else "step_by_step"
+    provider = args[1].lower() if len(args) > 1 else None
+    run_experiment(technique=technique, provider=provider)
 
 
 if __name__ == "__main__":
