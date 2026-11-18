@@ -316,21 +316,33 @@ def reevaluate_results_file(csv_path: str):
 
 
 if __name__ == "__main__":
-    base_file       = os.path.join(os.path.dirname(__file__), "results", "baseline_results.csv")
-    sbs_file        = os.path.join(os.path.dirname(__file__), "results", "step_by_step_results.csv")
-    few_shot_file   = os.path.join(os.path.dirname(__file__), "results", "few_shot_results.csv")
-    structured_file = os.path.join(os.path.dirname(__file__), "results", "structured_results.csv")
+    results_dir = os.path.join(os.path.dirname(__file__), "results")
 
-    # 300-question test-split results
-    base_300_file       = os.path.join(os.path.dirname(__file__), "results", "baseline_300_results.csv")
-    sbs_300_file        = os.path.join(os.path.dirname(__file__), "results", "step_by_step_300_results.csv")
-    few_shot_300_file   = os.path.join(os.path.dirname(__file__), "results", "few_shot_300_results.csv")
-    structured_300_file = os.path.join(os.path.dirname(__file__), "results", "structured_300_results.csv")
-
-    all_files = [
-        base_file, sbs_file, few_shot_file, structured_file,
-        base_300_file, sbs_300_file, few_shot_300_file, structured_300_file,
+    # Groq experiment results (20-question and 300-question variants)
+    groq_files = [
+        os.path.join(results_dir, "baseline_results.csv"),
+        os.path.join(results_dir, "step_by_step_results.csv"),
+        os.path.join(results_dir, "few_shot_results.csv"),
+        os.path.join(results_dir, "structured_results.csv"),
+        os.path.join(results_dir, "baseline_300_results.csv"),
+        os.path.join(results_dir, "step_by_step_300_results.csv"),
+        os.path.join(results_dir, "few_shot_300_results.csv"),
+        os.path.join(results_dir, "structured_300_results.csv"),
     ]
+
+    # Gemini experiment results (20-question and 300-question variants)
+    gemini_files = [
+        os.path.join(results_dir, "gemini_baseline_results.csv"),
+        os.path.join(results_dir, "gemini_step_by_step_results.csv"),
+        os.path.join(results_dir, "gemini_few_shot_results.csv"),
+        os.path.join(results_dir, "gemini_structured_results.csv"),
+        os.path.join(results_dir, "gemini_baseline_300_results.csv"),
+        os.path.join(results_dir, "gemini_step_by_step_300_results.csv"),
+        os.path.join(results_dir, "gemini_few_shot_300_results.csv"),
+        os.path.join(results_dir, "gemini_structured_300_results.csv"),
+    ]
+
+    all_files = groq_files + gemini_files
 
     for f in all_files:
         if os.path.exists(f):
