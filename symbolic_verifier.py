@@ -57,10 +57,13 @@ def _clean_side(side_str: str) -> str:
       - Currency symbols: $, ₹, €, £
       - Comma separators
       - Arithmetic symbols: × -> *, ÷ -> /
+      - Unicode spaces (narrow non-breaking spaces, non-breaking spaces)
       - Multiplication 'x' between numbers: 5 x 4 -> 5 * 4
       - Caret (^) -> **
     """
     s = str(side_str).strip()
+    # Normalize unicode whitespace variants to standard space
+    s = re.sub(r"[\u202f\u00a0\u2000-\u200b]", " ", s)
     # Remove common currency symbols and comma separators
     s = re.sub(r"[\$,\u20b9\u20ac\u00a3]", "", s)
     # Normalize arithmetic multiplication and division symbols
