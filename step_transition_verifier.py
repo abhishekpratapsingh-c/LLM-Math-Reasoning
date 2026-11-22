@@ -115,7 +115,14 @@ def _split_equation_sides(eq_str: str) -> Optional[Tuple[str, str]]:
     """Splits an equation string on '=' if exactly one '=' operator is present."""
     if not eq_str or "=" not in eq_str:
         return None
-    parts = eq_str.split("=")
+    # Strip any leading step prefix like "Step 1: " or conjunctions before splitting
+    clean_str = re.sub(
+        r"^(?:step\s*\d+\s*[:.)-]?|let|so|then|and|therefore|we\s+have)\s+",
+        "",
+        eq_str.strip(),
+        flags=re.IGNORECASE,
+    ).strip()
+    parts = clean_str.split("=")
     if len(parts) == 2:
         return parts[0].strip(), parts[1].strip()
     return None
@@ -163,6 +170,9 @@ def _verify_equation_to_equation_transition(
     p_lhs_raw, p_rhs_raw = prev_sides
     c_lhs_raw, c_rhs_raw = curr_sides
 
+    prev_clean_eq = f"{p_lhs_raw} = {p_rhs_raw}"
+    curr_clean_eq = f"{c_lhs_raw} = {c_rhs_raw}"
+
     # Parse LHS and RHS with safe denominator tracking
     l1, d1_l, err1_l = _parse_expression_with_denominators(p_lhs_raw, allow_variables=True)
     r1, d1_r, err1_r = _parse_expression_with_denominators(p_rhs_raw, allow_variables=True)
@@ -199,7 +209,7 @@ def _verify_equation_to_equation_transition(
     f2 = l2 - r2
 
     # Check for domain violations in curr_eq candidate roots
-    curr_sol = solve_equation(curr_eq)
+    curr_sol = solve_equation(curr_clean_eq)
     if curr_sol.status == "solved" and curr_sol.solutions and curr_sol.variable:
         violation = _check_domain_violation(curr_sol.solutions, curr_sol.variable, domain_restrs)
         if violation:
@@ -209,6 +219,49 @@ def _verify_equation_to_equation_transition(
                 f"Invalid algebraic transformation: {violation}",
                 domain_restrs,
             )
+
+    # Pure numerical equations with no free variables
+    if len(f1.free_symbols) == 0 and len(f2.free_symbols) == 0:
+        s_f1 = sympy.simplify(f1)
+        s_f2 = sympy.simplify(f2)
+        if s_f1 == 0 and s_f2 != 0:
+            return (
+                "invalid",
+                "incorrect_transformation",
+                f"Invalid arithmetic transformation: previous statement is mathematically correct, but transformed statement is false ({p_lhs_raw} != {r2}).",
+                domain_restrs,
+            )
+        elif s_f1 != 0 or s_f2 != 0:
+            if s_f1 != s_f2:
+                return (
+                    "invalid",
+                    "incorrect_transformation",
+                    "Invalid arithmetic transformation: equations are not mathematically equivalent.",
+                    domain_restrs,
+                )
+        # Both statements are mathematically true (s_f1 == 0 and s_f2 == 0)
+        if p_lhs_raw == c_lhs_raw and p_rhs_raw == c_rhs_raw:
+            return (
+                "valid",
+                "arithmetic_simplification",
+                "Identical numerical assertion repeated.",
+                domain_restrs,
+            )
+        return (
+            "unsupported",
+            "unrelated",
+            "Consecutive statements represent distinct, independent numerical calculations; no direct algebraic transformation.",
+            domain_restrs,
+        )
+
+    # If one equation has free variables and the other is pure numerical arithmetic, they are distinct calculations
+    if (len(f1.free_symbols) > 0 and len(f2.free_symbols) == 0) or (len(f1.free_symbols) == 0 and len(f2.free_symbols) > 0):
+        return (
+            "unsupported",
+            "unrelated",
+            "Consecutive statements represent distinct calculations (algebraic vs numerical); no direct algebraic transformation.",
+            domain_restrs,
+        )
 
     # 1. Algebraic Equivalence / Rearrangement (f1 - f2 == 0)
     if sympy.simplify(f1 - f2) == 0:
@@ -258,8 +311,14 @@ def _verify_equation_to_equation_transition(
         )
 
     # 4. Constant scaling (multiply / divide both sides by non-zero constant)
-    ratio = sympy.simplify(f1 / f2)
-    if ratio.is_number and ratio != 0:
+    ratio = None
+    try:
+        if sympy.simplify(f2) != 0:
+            ratio = sympy.simplify(f1 / f2)
+    except Exception:
+        ratio = None
+
+    if ratio is not None and ratio.is_number and ratio != 0:
         op = f"divided both sides by {ratio}" if ratio != 1 else "simplified both sides"
         return (
             "valid",
@@ -270,7 +329,7 @@ def _verify_equation_to_equation_transition(
 
     # 5. Division by variable expression (ratio contains free variables)
     free_syms = f1.free_symbols.union(f2.free_symbols)
-    if free_syms:
+    if ratio is not None and free_syms:
         is_poly_ratio = False
         try:
             poly = sympy.Poly(ratio, *free_syms)
@@ -280,7 +339,7 @@ def _verify_equation_to_equation_transition(
             pass
 
         if is_poly_ratio:
-            prev_sol = solve_equation(prev_eq)
+            prev_sol = solve_equation(prev_clean_eq)
             lost_roots = set(prev_sol.solutions) - set(curr_sol.solutions)
             conds = [f"{ratio} != 0 (division by variable expression)"] + domain_restrs
 
@@ -300,7 +359,7 @@ def _verify_equation_to_equation_transition(
                 )
 
     # 6. General solution-set comparison (for algebraic equations with variables)
-    prev_sol = solve_equation(prev_eq)
+    prev_sol = solve_equation(prev_clean_eq)
     if prev_sol.status == "solved" and curr_sol.status == "solved":
         # If equations involve completely different variables without relationship, they are distinct
         if prev_sol.variable and curr_sol.variable and prev_sol.variable != curr_sol.variable:
@@ -385,6 +444,27 @@ def _verify_single_transition(
             conditions=["Mathematically invalid expression"],
         )
 
+    # Check if either expression is unsupported (e.g. natural language formula)
+    prev_type = getattr(prev_expr, "expression_type", None)
+    curr_type = getattr(curr_expr, "expression_type", None)
+    if (
+        prev_v_status == "unsupported"
+        or curr_actual_status == "unsupported"
+        or prev_type in ("unsupported", "natural_language_formula")
+        or curr_type in ("unsupported", "natural_language_formula")
+    ):
+        unsupp_text = prev_raw if (prev_v_status == "unsupported" or prev_type in ("unsupported", "natural_language_formula")) else curr_raw
+        return StepTransition(
+            prev_step_number=prev_step_num,
+            curr_step_number=curr_step_num,
+            prev_expression=prev_raw,
+            curr_expression=curr_raw,
+            transition_status="unsupported",
+            transformation_type="unsupported",
+            explanation=f"Cannot verify transition involving unsupported expression ('{unsupp_text}').",
+            conditions=[],
+        )
+
     # B. Try equation-to-equation transition on raw text if both contain '='
     prev_sides = _split_equation_sides(prev_raw)
     curr_sides = _split_equation_sides(curr_raw)
@@ -393,84 +473,26 @@ def _verify_single_transition(
         prev_label = getattr(prev_expr, "label", None)
         curr_label = getattr(curr_expr, "label", None)
 
-        # Check for distinct multi-word labels (unrelated independent calculations)
-        if prev_label and curr_label and prev_label != curr_label:
-            # If multi-word conceptual labels like 'Cost of notebooks' vs 'Cost of pens'
-            if len(prev_label.split()) > 1 and len(curr_label.split()) > 1:
+        # Check for chained equality within the same step (e.g. "Label = A" -> "A = B")
+        if prev_step_num == curr_step_num and len(prev_sides) == 2 and len(curr_sides) == 2:
+            if prev_sides[1].strip() == curr_sides[0].strip():
                 return StepTransition(
                     prev_step_number=prev_step_num,
                     curr_step_number=curr_step_num,
                     prev_expression=prev_raw,
                     curr_expression=curr_raw,
-                    transition_status="unsupported",
-                    transformation_type="unrelated",
-                    explanation=f"Consecutive statements represent distinct, independent calculations ('{prev_label}' vs '{curr_label}'); no direct mathematical transformation.",
+                    transition_status="valid",
+                    transformation_type="arithmetic_simplification",
+                    explanation=f"Valid chained arithmetic simplification: '{prev_raw}' continues with '{curr_raw}'.",
                     conditions=[],
                 )
 
-        # Verify equation-to-equation transition
-        st, tt, expl, conds = _verify_equation_to_equation_transition(
-            prev_raw, curr_raw, accumulated_restrictions
-        )
-        if st in ("valid", "invalid"):
-            return StepTransition(
-                prev_step_number=prev_step_num,
-                curr_step_number=curr_step_num,
-                prev_expression=prev_raw,
-                curr_expression=curr_raw,
-                transition_status=st,
-                transformation_type=tt,
-                explanation=expl,
-                conditions=conds,
-            )
-
-    # C. Labeled Equalities (e.g. "Cost of notebooks = 3 * 40")
-    prev_label = getattr(prev_expr, "label", None)
-    curr_label = getattr(curr_expr, "label", None)
-
-    if prev_label and curr_label:
-        if prev_label == curr_label:
-            prev_rhs = (
-                getattr(prev_expr, "rhs_normalized", None)
-                or (prev_raw.split("=")[1].strip() if "=" in prev_raw else None)
-                or getattr(prev_expr, "rhs_value", None)
-                or ""
-            )
-            curr_rhs = (
-                getattr(curr_expr, "rhs_normalized", None)
-                or (curr_raw.split("=")[1].strip() if "=" in curr_raw else None)
-                or getattr(curr_expr, "rhs_value", None)
-                or ""
-            )
-
-            if "=" not in prev_rhs and "=" not in curr_rhs:
-                p_sym, _, err1 = _parse_expression_with_denominators(prev_rhs, allow_variables=True)
-                c_sym, _, err2 = _parse_expression_with_denominators(curr_rhs, allow_variables=True)
-                if not err1 and not err2:
-                    diff = sympy.simplify(p_sym - c_sym)
-                    if diff == 0:
-                        return StepTransition(
-                            prev_step_number=prev_step_num,
-                            curr_step_number=curr_step_num,
-                            prev_expression=prev_raw,
-                            curr_expression=curr_raw,
-                            transition_status="valid",
-                            transformation_type="arithmetic_simplification",
-                            explanation=f"Valid arithmetic simplification for '{prev_label}': RHS evaluates to {c_sym}.",
-                            conditions=[],
-                        )
-                    else:
-                        return StepTransition(
-                            prev_step_number=prev_step_num,
-                            curr_step_number=curr_step_num,
-                            prev_expression=prev_raw,
-                            curr_expression=curr_raw,
-                            transition_status="invalid",
-                            transformation_type="incorrect_transformation",
-                            explanation=f"Invalid calculation for '{prev_label}': previous RHS ({prev_rhs}) evaluates to {p_sym}, but current RHS ({curr_rhs}) evaluates to {c_sym}.",
-                            conditions=[],
-                        )
-        else:
+        # Check for distinct labeled calculations:
+        # If either is labeled and labels differ, they are independent calculations
+        is_prev_labeled = (prev_type == "labeled_equality") or bool(prev_label and len(prev_label.split()) > 1)
+        is_curr_labeled = (curr_type == "labeled_equality") or bool(curr_label and len(curr_label.split()) > 1)
+        if (is_prev_labeled or is_curr_labeled) and prev_label != curr_label:
+            label_desc = f"'{prev_label}' vs '{curr_label}'" if (prev_label and curr_label) else f"'{prev_label or curr_label}'"
             return StepTransition(
                 prev_step_number=prev_step_num,
                 curr_step_number=curr_step_num,
@@ -478,9 +500,88 @@ def _verify_single_transition(
                 curr_expression=curr_raw,
                 transition_status="unsupported",
                 transformation_type="unrelated",
-                explanation=f"Consecutive statements represent distinct, independent calculations ('{prev_label}' vs '{curr_label}'); no direct mathematical transformation.",
+                explanation=f"Consecutive statements represent distinct, independent calculations ({label_desc}); no direct mathematical transformation.",
                 conditions=[],
             )
+
+        # Check if both represent the same conceptual labeled quantity (e.g. "Cost of notebooks = 3 * 40" -> "Cost of notebooks = 120"):
+        # Section C below handles comparing their RHS expressions.
+        # But if either is an algebraic equality (e.g. "x = 3" -> "x**2 = 9"), it is an algebraic equation transition!
+        is_same_labeled_concept = bool(
+            prev_label and curr_label and prev_label == curr_label
+            and prev_type != "algebraic_equality" and curr_type != "algebraic_equality"
+            and (is_prev_labeled or is_curr_labeled)
+        )
+        if not is_same_labeled_concept:
+            st, tt, expl, conds = _verify_equation_to_equation_transition(
+                prev_raw, curr_raw, accumulated_restrictions
+            )
+            if st in ("valid", "invalid") or tt in ("unrelated", "unsupported"):
+                return StepTransition(
+                    prev_step_number=prev_step_num,
+                    curr_step_number=curr_step_num,
+                    prev_expression=prev_raw,
+                    curr_expression=curr_raw,
+                    transition_status=st,
+                    transformation_type=tt,
+                    explanation=expl,
+                    conditions=conds,
+                )
+
+    # C. Labeled Equalities (e.g. "Cost of notebooks = 3 * 40" -> "Cost of notebooks = 120")
+    prev_label = getattr(prev_expr, "label", None)
+    curr_label = getattr(curr_expr, "label", None)
+    prev_type = getattr(prev_expr, "expression_type", None)
+    curr_type = getattr(curr_expr, "expression_type", None)
+    is_prev_labeled = (prev_type == "labeled_equality") or bool(prev_label and len(prev_label.split()) > 1)
+    is_curr_labeled = (curr_type == "labeled_equality") or bool(curr_label and len(curr_label.split()) > 1)
+    is_same_labeled_concept = bool(
+        prev_label and curr_label and prev_label == curr_label
+        and prev_type != "algebraic_equality" and curr_type != "algebraic_equality"
+        and (is_prev_labeled or is_curr_labeled)
+    )
+
+    if is_same_labeled_concept:
+        prev_rhs = (
+            getattr(prev_expr, "rhs_normalized", None)
+            or (prev_raw.split("=")[1].strip() if "=" in prev_raw else None)
+            or getattr(prev_expr, "rhs_value", None)
+            or ""
+        )
+        curr_rhs = (
+            getattr(curr_expr, "rhs_normalized", None)
+            or (curr_raw.split("=")[1].strip() if "=" in curr_raw else None)
+            or getattr(curr_expr, "rhs_value", None)
+            or ""
+        )
+
+        if "=" not in prev_rhs and "=" not in curr_rhs:
+            p_sym, _, err1 = _parse_expression_with_denominators(prev_rhs, allow_variables=True)
+            c_sym, _, err2 = _parse_expression_with_denominators(curr_rhs, allow_variables=True)
+            if not err1 and not err2:
+                diff = sympy.simplify(p_sym - c_sym)
+                if diff == 0:
+                    return StepTransition(
+                        prev_step_number=prev_step_num,
+                        curr_step_number=curr_step_num,
+                        prev_expression=prev_raw,
+                        curr_expression=curr_raw,
+                        transition_status="valid",
+                        transformation_type="arithmetic_simplification",
+                        explanation=f"Valid arithmetic simplification for '{prev_label}': RHS evaluates to {c_sym}.",
+                        conditions=[],
+                    )
+                else:
+                    return StepTransition(
+                        prev_step_number=prev_step_num,
+                        curr_step_number=curr_step_num,
+                        prev_expression=prev_raw,
+                        curr_expression=curr_raw,
+                        transition_status="invalid",
+                        transformation_type="incorrect_transformation",
+                        explanation=f"Invalid calculation for '{prev_label}': previous RHS ({prev_rhs}) evaluates to {p_sym}, but current RHS ({curr_rhs}) evaluates to {c_sym}.",
+                        conditions=[],
+                    )
 
     # D. Both are Standalone Expressions (e.g. "3 * 40 + 2 * 15" -> "120 + 30" -> "150")
     p_sym, d1, err1 = _parse_expression_with_denominators(prev_raw, allow_variables=True)

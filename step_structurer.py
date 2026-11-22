@@ -175,8 +175,8 @@ def _structure_equality_clause(step_num: int, clause: str) -> List[StructuredExp
         cand_lhs = _clean_token_preserving_math(raw_lhs)
         cand_rhs = _clean_token_preserving_math(raw_rhs)
 
-        # Remove leading conjunctions from LHS (e.g. 'So', 'Therefore', 'Let')
-        cand_lhs = re.sub(r"^(?:let|so|then|and|therefore|we\s+have)\s+", "", cand_lhs, flags=re.IGNORECASE).strip()
+        # Remove leading conjunctions or step headings from LHS (e.g. 'Step 1:', 'So', 'Therefore', 'Let')
+        cand_lhs = re.sub(r"^(?:step\s*\d+\s*[:.)-]?|let|so|then|and|therefore|we\s+have)\s+", "", cand_lhs, flags=re.IGNORECASE).strip()
         pair_raw_text = f"{raw_lhs} = {raw_rhs}"
 
         # 1. Check if both sides are purely natural-language text (no digits on either side)
