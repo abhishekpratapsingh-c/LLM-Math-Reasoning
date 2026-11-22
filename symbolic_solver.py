@@ -733,7 +733,7 @@ def verify_solution(
         )
 
     raw_lhs, raw_rhs = parts[0].strip(), parts[1].strip()
-    lhs_expr, lhs_err = _parse_expression_safely(raw_lhs, allow_variables=True)
+    lhs_expr, lhs_denoms, lhs_err = _parse_expression_with_denominators(raw_lhs, allow_variables=True)
     if lhs_err:
         return SolutionVerificationResult(
             status="invalid",
@@ -742,7 +742,7 @@ def verify_solution(
             explanation=f"Left-hand side error: {lhs_err}",
         )
 
-    rhs_expr, rhs_err = _parse_expression_safely(raw_rhs, allow_variables=True)
+    rhs_expr, rhs_denoms, rhs_err = _parse_expression_with_denominators(raw_rhs, allow_variables=True)
     if rhs_err:
         return SolutionVerificationResult(
             status="invalid",
@@ -751,7 +751,9 @@ def verify_solution(
             explanation=f"Right-hand side error: {rhs_err}",
         )
 
-    all_symbols = sorted(list(lhs_expr.free_symbols | rhs_expr.free_symbols), key=lambda s: s.name)
+    all_denominators = lhs_denoms + rhs_denoms
+    denom_symbols = {s for d in all_denominators if hasattr(d, "free_symbols") for s in d.free_symbols}
+    all_symbols = sorted(list(lhs_expr.free_symbols | rhs_expr.free_symbols | denom_symbols), key=lambda s: s.name)
 
     # Parse proposed_solution into a dictionary of {Symbol: SymPy value}
     sub_map: Dict[Any, Any] = {}
@@ -819,8 +821,66 @@ def verify_solution(
 
     # Evaluate equation sides after substitution
     try:
+        # Check domain restrictions from original denominators under proposed substitution
+        violated_restrictions = []
+        lhs_has_zero_denom = False
+        rhs_has_zero_denom = False
+
+        for denom in lhs_denoms:
+            try:
+                val_d = denom.subs(sub_map)
+                val_d_simp = sympy.simplify(val_d)
+                if val_d_simp == 0 or val_d_simp in (sympy.zoo, sympy.nan):
+                    lhs_has_zero_denom = True
+                    restr_list = _compute_domain_restrictions([denom])
+                    restr_str = f" ({', '.join(restr_list)})" if restr_list else ""
+                    violated_restrictions.append(f"denominator '{denom}' evaluates to 0{restr_str}")
+            except Exception:
+                pass
+
+        for denom in rhs_denoms:
+            try:
+                val_d = denom.subs(sub_map)
+                val_d_simp = sympy.simplify(val_d)
+                if val_d_simp == 0 or val_d_simp in (sympy.zoo, sympy.nan):
+                    rhs_has_zero_denom = True
+                    restr_list = _compute_domain_restrictions([denom])
+                    restr_str = f" ({', '.join(restr_list)})" if restr_list else ""
+                    violated_restrictions.append(f"denominator '{denom}' evaluates to 0{restr_str}")
+            except Exception:
+                pass
+
+        if violated_restrictions or lhs_has_zero_denom or rhs_has_zero_denom:
+            eval_lhs = sympy.nan if lhs_has_zero_denom else sympy.simplify(lhs_expr.subs(sub_map))
+            eval_rhs = sympy.nan if rhs_has_zero_denom else sympy.simplify(rhs_expr.subs(sub_map))
+            restr_desc = "; ".join(violated_restrictions) if violated_restrictions else "division by zero in denominator"
+            return SolutionVerificationResult(
+                status="incorrect",
+                original_equation=raw_eq,
+                proposed_solution=proposed_solution,
+                explanation=f"Proposed solution violates domain restriction: {restr_desc}.",
+                evaluated_lhs=str(eval_lhs),
+                evaluated_rhs=str(eval_rhs),
+            )
+
         eval_lhs = sympy.simplify(lhs_expr.subs(sub_map))
         eval_rhs = sympy.simplify(rhs_expr.subs(sub_map))
+
+        # Check if evaluation produced non-finite or undefined values (nan/zoo)
+        if (
+            eval_lhs in (sympy.zoo, sympy.nan)
+            or eval_rhs in (sympy.zoo, sympy.nan)
+            or (hasattr(eval_lhs, "is_finite") and eval_lhs.is_finite is False)
+            or (hasattr(eval_rhs, "is_finite") and eval_rhs.is_finite is False)
+        ):
+            return SolutionVerificationResult(
+                status="incorrect",
+                original_equation=raw_eq,
+                proposed_solution=proposed_solution,
+                explanation=f"Proposed solution yields undefined or non-finite values: LHS={eval_lhs}, RHS={eval_rhs}.",
+                evaluated_lhs=str(eval_lhs),
+                evaluated_rhs=str(eval_rhs),
+            )
 
         diff = sympy.simplify(eval_lhs - eval_rhs)
         is_correct = bool(diff == 0)
@@ -985,6 +1045,15 @@ def _run_tests():
     d3 = simplify_expression("x / x")
     _assert_test("Simplification preserves restriction: x / x -> 1 for x != 0",
                  (d3.simplified_expression, d3.domain_restrictions), ("1", ["x != 0"]))
+
+    d4 = verify_solution("x / x = 1", "0")
+    _assert_test("Verifier rejects undefined singularity in identity: x / x = 1 with 0", d4.status, "incorrect")
+
+    d5 = verify_solution("x / x = 1", "5")
+    _assert_test("Verifier accepts valid value in identity: x / x = 1 with 5", d5.status, "correct")
+
+    d6 = verify_solution("(x - 2) * (x - 3) / (x - 2) = -1", "2")
+    _assert_test("Verifier catches removable factor singularity: x = 2", d6.status, "incorrect")
 
     print("\n" + "=" * 75)
     print(f"Test Summary: {passed_count}/{total_count} tests passed.")

@@ -356,6 +356,142 @@ class TestSolverEdgeCases(unittest.TestCase):
         self.assertEqual(res.solutions, [])
         self.assertIn("x != 2", res.domain_restrictions)
 
+    # ==========================================================================
+    # 6. Objective 16: Adversarial Interaction & Verifier Hardening Tests
+    # ==========================================================================
+    def test_adv_1_quadratic_all_roots(self):
+        """Mathematical Input: x**2 - 5*x + 6 = 0
+        Roots are x = 2 and x = 3.
+        Solver must find both roots, and verifier must accept both while rejecting non-roots.
+        """
+        sol = solve_equation("x**2 - 5*x + 6 = 0")
+        self.assertEqual(sol.status, "solved")
+        self.assertEqual(sol.solution_type, "multiple")
+        self.assertEqual(sol.solutions, ["2", "3"])
+
+        v2 = verify_solution("x**2 - 5*x + 6 = 0", {"x": 2})
+        self.assertEqual(v2.status, "correct")
+        v3 = verify_solution("x**2 - 5*x + 6 = 0", {"x": 3})
+        self.assertEqual(v3.status, "correct")
+        v4 = verify_solution("x**2 - 5*x + 6 = 0", {"x": 4})
+        self.assertEqual(v4.status, "incorrect")
+        v1 = verify_solution("x**2 - 5*x + 6 = 0", {"x": 1})
+        self.assertEqual(v1.status, "incorrect")
+
+    def test_adv_2_mixed_valid_and_extraneous_roots(self):
+        """Mathematical Input: (x - 1) * (x - 2) / (x - 1) = 0
+        Numerator roots are 1 and 2. Denominator requires x != 1.
+        Solver must eliminate 1 and return only 2.
+        Verifier must accept 2 and reject 1.
+        """
+        sol = solve_equation("(x - 1) * (x - 2) / (x - 1) = 0")
+        self.assertEqual(sol.status, "solved")
+        self.assertEqual(sol.solution_type, "unique")
+        self.assertEqual(sol.solutions, ["2"])
+        self.assertIn("x != 1", sol.domain_restrictions)
+
+        v_valid = verify_solution("(x - 1) * (x - 2) / (x - 1) = 0", "2")
+        self.assertEqual(v_valid.status, "correct")
+
+        v_singularity = verify_solution("(x - 1) * (x - 2) / (x - 1) = 0", "1")
+        self.assertEqual(v_singularity.status, "incorrect")
+
+    def test_adv_3_candidate_violates_original_denominator(self):
+        """Mathematical Input: 1 / (x - 3) = 2 / (x - 3) + 1
+        Rearranging: -1 / (x - 3) = 1 -> x - 3 = -1 -> x = 2 != 3. Valid root is 2.
+        Verifying candidate x = 3 (the vertical asymptote) must be rejected by verifier.
+        """
+        sol = solve_equation("1 / (x - 3) = 2 / (x - 3) + 1")
+        self.assertEqual(sol.status, "solved")
+        self.assertEqual(sol.solution_type, "unique")
+        self.assertEqual(sol.solutions, ["2"])
+
+        v_sing = verify_solution("1 / (x - 3) = 2 / (x - 3) + 1", "3")
+        self.assertEqual(v_sing.status, "incorrect")
+        self.assertIn("violates domain restriction", v_sing.explanation)
+
+        v_valid = verify_solution("1 / (x - 3) = 2 / (x - 3) + 1", "2")
+        self.assertEqual(v_valid.status, "correct")
+
+    def test_adv_4_incorrect_proposed_solutions(self):
+        """Mathematical Inputs: Incorrect proposed solutions across linear, quadratic, and fractional.
+        Verifier must reject each with clear incorrect status.
+        """
+        v_quad = verify_solution("x**2 - 4 = 0", "3")
+        self.assertEqual(v_quad.status, "incorrect")
+
+        v_lin = verify_solution("3*x + 7 = 22", "4")
+        self.assertEqual(v_lin.status, "incorrect")
+
+        v_frac = verify_solution("2*x = 1", "1/3")
+        self.assertEqual(v_frac.status, "incorrect")
+
+    def test_adv_5_multi_variable_with_target_variable(self):
+        """Mathematical Input: 2*x + 3*y = 12
+        Solving for target variable x: x = 6 - 3*y/2.
+        Verifying assignments: {x: 3, y: 2} satisfies (6 + 6 = 12), {x: 3, y: 3} fails (15 != 12).
+        """
+        sol = solve_equation("2*x + 3*y = 12", variable="x")
+        self.assertEqual(sol.status, "solved")
+        self.assertEqual(sol.solution_type, "unique")
+        self.assertEqual(sol.variable, "x")
+
+        v_ok = verify_solution("2*x + 3*y = 12", {"x": 3, "y": 2})
+        self.assertEqual(v_ok.status, "correct")
+
+        v_fail = verify_solution("2*x + 3*y = 12", {"x": 3, "y": 3})
+        self.assertEqual(v_fail.status, "incorrect")
+
+    def test_adv_6_identity_and_no_solution_verification(self):
+        """Mathematical Input: Identity x + 5 = x + 5 and Inconsistent x + 2 = x + 7.
+        Verifier handles identities with arbitrary values, and rejects any value for inconsistent equations.
+        For x / x = 1, verifier rejects singularity x = 0 and accepts non-zero x = 42.
+        """
+        v_id = verify_solution("x + 5 = x + 5", "10")
+        self.assertEqual(v_id.status, "correct")
+
+        v_incons = verify_solution("x + 2 = x + 7", "5")
+        self.assertEqual(v_incons.status, "incorrect")
+
+        v_rat_zero = verify_solution("x / x = 1", "0")
+        self.assertEqual(v_rat_zero.status, "incorrect")
+
+        v_rat_valid = verify_solution("x / x = 1", "42")
+        self.assertEqual(v_rat_valid.status, "correct")
+
+    def test_adv_7_pre_cancellation_singularity_solver_verifier_alignment(self):
+        """Mathematical Input: (x - 2) * (x - 3) / (x - 2) = -1
+        Simplification gives x - 3 = -1 -> x = 2.
+        Original equation has denominator x - 2, requiring x != 2.
+        Both solver and verifier must agree that x = 2 is not a solution:
+        - Solver must return no_solution.
+        - Verifier must reject proposed x = 2 as incorrect (domain violation).
+        """
+        sol = solve_equation("(x - 2) * (x - 3) / (x - 2) = -1")
+        self.assertEqual(sol.solution_type, "no_solution")
+        self.assertEqual(sol.solutions, [])
+        self.assertIn("x != 2", sol.domain_restrictions)
+
+        v = verify_solution("(x - 2) * (x - 3) / (x - 2) = -1", "2")
+        self.assertEqual(v.status, "incorrect")
+        self.assertIn("violates domain restriction", v.explanation)
+
+    def test_adv_8_rational_subtraction_identity_alignment(self):
+        """Mathematical Input: x / (x - 1) - 1 / (x - 1) = 1
+        Simplifies to (x - 1)/(x - 1) = 1 for all x != 1.
+        Solver must report infinite_solutions with restriction x != 1.
+        Verifier must reject x = 1 and accept x = 2.
+        """
+        sol = solve_equation("x / (x - 1) - 1 / (x - 1) = 1")
+        self.assertEqual(sol.solution_type, "infinite_solutions")
+        self.assertIn("x != 1", sol.domain_restrictions)
+
+        v_sing = verify_solution("x / (x - 1) - 1 / (x - 1) = 1", "1")
+        self.assertEqual(v_sing.status, "incorrect")
+
+        v_valid = verify_solution("x / (x - 1) - 1 / (x - 1) = 1", "2")
+        self.assertEqual(v_valid.status, "correct")
+
 
 # ==============================================================================
 # Standalone Audit Runner & Report Generator
@@ -442,6 +578,24 @@ def run_edge_case_audit():
          lambda: solve_equation("(x**2 - 4) / (x - 2) = 5").solutions == ["3"] and "x != 2" in solve_equation("(x**2 - 4) / (x - 2) = 5").domain_restrictions),
         ("Restrictions", "(x**2 - 4) / (x - 2) = 4", "Discards extraneous cancellation root x = 2 -> no_solution",
          lambda: solve_equation("(x**2 - 4) / (x - 2) = 4").solution_type == "no_solution" and solve_equation("(x**2 - 4) / (x - 2) = 4").solutions == []),
+
+        # 6. Objective 16: Adversarial Interaction & Verifier Hardening
+        ("Adversarial", "x**2 - 5*x + 6 = 0", "Finds roots [2, 3] and verifies both correctly",
+         lambda: solve_equation("x**2 - 5*x + 6 = 0").solutions == ["2", "3"] and verify_solution("x**2 - 5*x + 6 = 0", {"x": 2}).status == "correct" and verify_solution("x**2 - 5*x + 6 = 0", {"x": 3}).status == "correct"),
+        ("Adversarial", "(x - 1)*(x - 2)/(x - 1) = 0", "Solves to 2; verifier accepts 2 and rejects 1",
+         lambda: solve_equation("(x - 1) * (x - 2) / (x - 1) = 0").solutions == ["2"] and verify_solution("(x - 1) * (x - 2) / (x - 1) = 0", "2").status == "correct" and verify_solution("(x - 1) * (x - 2) / (x - 1) = 0", "1").status == "incorrect"),
+        ("Adversarial", "1/(x-3) = 2/(x-3) + 1", "Solves to 2; verifier rejects singularity 3",
+         lambda: solve_equation("1 / (x - 3) = 2 / (x - 3) + 1").solutions == ["2"] and verify_solution("1 / (x - 3) = 2 / (x - 3) + 1", "3").status == "incorrect"),
+        ("Adversarial", "x**2 - 4 = 0 with x=3", "Verifier rejects incorrect non-root candidate",
+         lambda: verify_solution("x**2 - 4 = 0", "3").status == "incorrect"),
+        ("Adversarial", "2*x + 3*y = 12 with {x:3, y:2}", "Multi-variable verifier accepts valid pair, rejects invalid",
+         lambda: verify_solution("2*x + 3*y = 12", {"x": 3, "y": 2}).status == "correct" and verify_solution("2*x + 3*y = 12", {"x": 3, "y": 3}).status == "incorrect"),
+        ("Adversarial", "x + 2 = x + 7 with x=5", "Inconsistent equation rejects candidate solution",
+         lambda: verify_solution("x + 2 = x + 7", "5").status == "incorrect"),
+        ("Adversarial", "(x-2)*(x-3)/(x-2) = -1", "Solver and verifier agree singularity 2 is invalid",
+         lambda: solve_equation("(x - 2) * (x - 3) / (x - 2) = -1").solution_type == "no_solution" and verify_solution("(x - 2) * (x - 3) / (x - 2) = -1", "2").status == "incorrect"),
+        ("Adversarial", "x/(x-1) - 1/(x-1) = 1", "Identity for x!=1: verifier rejects 1, accepts 2",
+         lambda: solve_equation("x / (x - 1) - 1 / (x - 1) = 1").solution_type == "infinite_solutions" and verify_solution("x / (x - 1) - 1 / (x - 1) = 1", "1").status == "incorrect" and verify_solution("x / (x - 1) - 1 / (x - 1) = 1", "2").status == "correct"),
     ]
 
     passed_count = 0
