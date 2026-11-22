@@ -46,6 +46,7 @@ class SimplifyResult:
     simplified_expression: Optional[str]
     explanation: str
     sympy_expr: Optional[Any] = None
+    domain_restrictions: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -53,6 +54,7 @@ class SimplifyResult:
             "original_expression": self.original_expression,
             "simplified_expression": self.simplified_expression,
             "explanation": self.explanation,
+            "domain_restrictions": self.domain_restrictions,
         }
 
 
@@ -65,6 +67,7 @@ class SolveResult:
     solution_type: str                  # 'unique', 'multiple', 'no_solution', 'infinite_solutions', 'invalid'
     solutions: List[str] = field(default_factory=list)
     explanation: str = ""
+    domain_restrictions: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -74,6 +77,7 @@ class SolveResult:
             "solution_type": self.solution_type,
             "solutions": self.solutions,
             "explanation": self.explanation,
+            "domain_restrictions": self.domain_restrictions,
         }
 
 
@@ -236,36 +240,103 @@ def _ast_to_sympy(node: ast.AST, source_text: str, allow_variables: bool = True)
         raise ValueError(f"Unsupported AST node type: {type(node).__name__}")
 
 
-def _parse_expression_safely(expr_str: str, allow_variables: bool = True) -> Tuple[Optional[Any], Optional[str]]:
-    """Parses a mathematical expression string using restricted AST into a SymPy expression."""
+def _extract_denominators_from_ast(tree: ast.AST, source_text: str, allow_variables: bool = True) -> List[Any]:
+    """Collects all denominator expressions from division operations in the AST."""
+    denominators: List[Any] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+            try:
+                denom_sym = _ast_to_sympy(node.right, source_text, allow_variables=allow_variables)
+                denominators.append(denom_sym)
+            except Exception:
+                pass
+    return denominators
+
+
+def _compute_domain_restrictions(denominators: List[Any]) -> List[str]:
+    """Computes human-readable domain restrictions (e.g. ['x != 0', 'x != 1']) from denominator expressions."""
+    restrictions: List[str] = []
+    seen = set()
+
+    for denom in denominators:
+        if not hasattr(denom, "free_symbols") or not denom.free_symbols:
+            continue
+
+        syms = sorted(list(denom.free_symbols), key=lambda s: s.name)
+        if len(syms) == 1:
+            sym = syms[0]
+            try:
+                zeros = sympy.solve(denom, sym)
+
+                def _sort_val(v):
+                    try:
+                        if v.is_real and v.is_number:
+                            return (0, float(v))
+                    except Exception:
+                        pass
+                    return (1, str(v))
+
+                sorted_zeros = sorted(zeros, key=_sort_val)
+                for z in sorted_zeros:
+                    restr = f"{sym.name} != {z}"
+                    if restr not in seen:
+                        seen.add(restr)
+                        restrictions.append(restr)
+            except Exception:
+                restr = f"{denom} != 0"
+                if restr not in seen:
+                    seen.add(restr)
+                    restrictions.append(restr)
+        else:
+            restr = f"{denom} != 0"
+            if restr not in seen:
+                seen.add(restr)
+                restrictions.append(restr)
+
+    return restrictions
+
+
+def _parse_expression_with_denominators(
+    expr_str: str, allow_variables: bool = True
+) -> Tuple[Optional[Any], List[Any], Optional[str]]:
+    """Parses a mathematical expression string using restricted AST into a SymPy expression,
+    also returning any denominator expressions found in division operations.
+    """
     if not isinstance(expr_str, str) or not expr_str.strip():
-        return None, "Empty or non-string expression."
+        return None, [], "Empty or non-string expression."
 
     raw_str = expr_str.strip()
     if len(raw_str) > MAX_EXPRESSION_LENGTH:
-        return None, f"Expression length ({len(raw_str)}) exceeds maximum allowed limit ({MAX_EXPRESSION_LENGTH} characters)."
+        return None, [], f"Expression length ({len(raw_str)}) exceeds maximum allowed limit ({MAX_EXPRESSION_LENGTH} characters)."
 
     cleaned = _clean_math_text(raw_str)
     if not cleaned:
-        return None, "Empty expression after cleaning."
+        return None, [], "Empty expression after cleaning."
 
     try:
         tree = ast.parse(cleaned, mode="eval")
         _check_ast_safety(tree)
         sympy_expr = _ast_to_sympy(tree, cleaned, allow_variables=allow_variables)
+        denominators = _extract_denominators_from_ast(tree, cleaned, allow_variables=allow_variables)
 
         if hasattr(sympy_expr, "is_finite") and sympy_expr.is_finite is False:
-            return None, "Expression evaluated to non-finite or undefined value (e.g. division by zero)."
+            return None, [], "Expression evaluated to non-finite or undefined value (e.g. division by zero)."
         if sympy.zoo in sympy_expr.atoms() or sympy.nan in sympy_expr.atoms():
-            return None, "Expression contains undefined or infinite values (zoo/nan)."
+            return None, [], "Expression contains undefined or infinite values (zoo/nan)."
 
-        return sympy_expr, None
+        return sympy_expr, denominators, None
     except SyntaxError as e:
-        return None, f"Syntax error in expression '{expr_str.strip()}': {e.msg}"
+        return None, [], f"Syntax error in expression '{expr_str.strip()}': {e.msg}"
     except ValueError as e:
-        return None, str(e)
+        return None, [], str(e)
     except Exception as e:
-        return None, f"Parsing failed for '{expr_str.strip()}': {e}"
+        return None, [], f"Parsing failed for '{expr_str.strip()}': {e}"
+
+
+def _parse_expression_safely(expr_str: str, allow_variables: bool = True) -> Tuple[Optional[Any], Optional[str]]:
+    """Parses a mathematical expression string using restricted AST into a SymPy expression."""
+    expr, _, err = _parse_expression_with_denominators(expr_str, allow_variables=allow_variables)
+    return expr, err
 
 
 # ==============================================================================
@@ -282,9 +353,10 @@ def simplify_expression(expr_str: str) -> SimplifyResult:
     Returns
     -------
     SimplifyResult
-        Dataclass containing status, original_expression, simplified_expression, and explanation.
+        Dataclass containing status, original_expression, simplified_expression, explanation,
+        and domain_restrictions.
     """
-    sympy_expr, err = _parse_expression_safely(expr_str, allow_variables=True)
+    sympy_expr, denominators, err = _parse_expression_with_denominators(expr_str, allow_variables=True)
     if err is not None:
         return SimplifyResult(
             status="invalid",
@@ -292,17 +364,27 @@ def simplify_expression(expr_str: str) -> SimplifyResult:
             simplified_expression=None,
             explanation=err,
             sympy_expr=None,
+            domain_restrictions=[],
         )
+
+    domain_restrictions = _compute_domain_restrictions(denominators)
 
     try:
         simplified = sympy.simplify(sympy_expr)
         simplified_str = str(simplified)
+        if domain_restrictions:
+            restr_str = ", ".join(domain_restrictions)
+            expl = f"Expression successfully simplified to {simplified_str} for {restr_str}."
+        else:
+            expl = f"Expression successfully simplified to {simplified_str}."
+
         return SimplifyResult(
             status="simplified",
             original_expression=expr_str,
             simplified_expression=simplified_str,
-            explanation=f"Expression successfully simplified to {simplified_str}.",
+            explanation=expl,
             sympy_expr=simplified,
+            domain_restrictions=domain_restrictions,
         )
     except Exception as e:
         return SimplifyResult(
@@ -311,6 +393,7 @@ def simplify_expression(expr_str: str) -> SimplifyResult:
             simplified_expression=None,
             explanation=f"Simplification error: {e}",
             sympy_expr=None,
+            domain_restrictions=domain_restrictions,
         )
 
 
@@ -387,7 +470,7 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
         )
 
     # Parse LHS and RHS
-    lhs_expr, lhs_err = _parse_expression_safely(raw_lhs, allow_variables=True)
+    lhs_expr, lhs_denoms, lhs_err = _parse_expression_with_denominators(raw_lhs, allow_variables=True)
     if lhs_err:
         return SolveResult(
             status="invalid",
@@ -398,7 +481,7 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
             explanation=f"Left-hand side error: {lhs_err}",
         )
 
-    rhs_expr, rhs_err = _parse_expression_safely(raw_rhs, allow_variables=True)
+    rhs_expr, rhs_denoms, rhs_err = _parse_expression_with_denominators(raw_rhs, allow_variables=True)
     if rhs_err:
         return SolveResult(
             status="invalid",
@@ -409,8 +492,18 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
             explanation=f"Right-hand side error: {rhs_err}",
         )
 
-    # Detect free variables
-    all_symbols = sorted(list(lhs_expr.free_symbols | rhs_expr.free_symbols), key=lambda s: s.name)
+    all_denominators = lhs_denoms + rhs_denoms
+    domain_restrictions = _compute_domain_restrictions(all_denominators)
+
+    # Detect free variables (including any variables present in denominators)
+    all_symbols = sorted(
+        list(
+            lhs_expr.free_symbols
+            | rhs_expr.free_symbols
+            | {s for d in all_denominators if hasattr(d, "free_symbols") for s in d.free_symbols}
+        ),
+        key=lambda s: s.name,
+    )
 
     # Variable target determination
     if variable is not None:
@@ -422,13 +515,19 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
             # No variables present: check numeric identity vs inconsistency
             diff = sympy.simplify(lhs_expr - rhs_expr)
             if diff == 0:
+                if domain_restrictions:
+                    restr_str = ", ".join(domain_restrictions)
+                    expl = f"Equation is an identity subject to domain restrictions: {restr_str}."
+                else:
+                    expl = "Equation is an identity (satisfied for all values)."
                 return SolveResult(
                     status="solved",
                     original_equation=raw_eq,
                     variable=None,
                     solution_type="infinite_solutions",
                     solutions=[],
-                    explanation="Equation is an identity (satisfied for all values).",
+                    domain_restrictions=domain_restrictions,
+                    explanation=expl,
                 )
             else:
                 return SolveResult(
@@ -437,6 +536,7 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
                     variable=None,
                     solution_type="no_solution",
                     solutions=[],
+                    domain_restrictions=domain_restrictions,
                     explanation="Equation is inconsistent (no solution exists).",
                 )
         else:
@@ -447,6 +547,7 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
                 variable=None,
                 solution_type="invalid",
                 solutions=[],
+                domain_restrictions=domain_restrictions,
                 explanation=f"Ambiguous target variable: multiple variables found {var_names} and no target specified.",
             )
 
@@ -458,13 +559,19 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
 
         # Check for identity: diff == 0
         if diff == 0:
+            if domain_restrictions:
+                restr_str = ", ".join(domain_restrictions)
+                expl = f"Equation is an identity for {var_name} subject to domain restrictions: {restr_str}."
+            else:
+                expl = f"Equation is an identity (satisfied for all values of {var_name})."
             return SolveResult(
                 status="solved",
                 original_equation=raw_eq,
                 variable=var_name,
                 solution_type="infinite_solutions",
                 solutions=[],
-                explanation=f"Equation is an identity (satisfied for all values of {var_name}).",
+                domain_restrictions=domain_restrictions,
+                explanation=expl,
             )
 
         # If target variable canceled out completely and diff != 0
@@ -475,19 +582,48 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
                 variable=var_name,
                 solution_type="no_solution",
                 solutions=[],
+                domain_restrictions=domain_restrictions,
                 explanation=f"Equation has no solution for {var_name} (inconsistent).",
             )
 
         raw_solutions = sympy.solve(diff, target_sym)
 
-        if not raw_solutions:
+        # Filter candidate solutions that violate domain restrictions (make any original denominator zero)
+        valid_solutions = []
+        discarded_solutions = []
+        for sol in raw_solutions:
+            violates_domain = False
+            for denom in all_denominators:
+                try:
+                    denom_val = sympy.simplify(denom.subs({target_sym: sol}))
+                    if denom_val == 0:
+                        violates_domain = True
+                        break
+                except Exception:
+                    pass
+            if violates_domain:
+                discarded_solutions.append(sol)
+            else:
+                valid_solutions.append(sol)
+
+        if not valid_solutions:
+            if discarded_solutions:
+                disc_str = ", ".join(str(s) for s in discarded_solutions)
+                restr_str = ", ".join(domain_restrictions) if domain_restrictions else "denominator = 0"
+                expl = (
+                    f"No valid solution found for {var_name}: candidate solution(s) "
+                    f"{var_name} = {disc_str} violate domain restrictions ({restr_str})."
+                )
+            else:
+                expl = f"No solution found for {var_name}."
             return SolveResult(
                 status="solved",
                 original_equation=raw_eq,
                 variable=var_name,
                 solution_type="no_solution",
                 solutions=[],
-                explanation=f"No solution found for {var_name}.",
+                domain_restrictions=domain_restrictions,
+                explanation=expl,
             )
 
         # Deterministically sort solutions numerically if real, else by string
@@ -499,15 +635,33 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
                 pass
             return (1, str(sol))
 
-        sorted_solutions = sorted(raw_solutions, key=_sort_key)
+        sorted_solutions = sorted(valid_solutions, key=_sort_key)
         sol_strings = [str(s) for s in sorted_solutions]
 
         if len(sol_strings) == 1:
             sol_type = "unique"
-            expl = f"Unique solution found for {var_name}: {sol_strings[0]}."
+            if discarded_solutions:
+                disc_str = ", ".join(str(s) for s in discarded_solutions)
+                expl = (
+                    f"Unique solution found for {var_name}: {sol_strings[0]} "
+                    f"(extraneous candidate {var_name} = {disc_str} excluded due to domain restrictions)."
+                )
+            elif domain_restrictions:
+                expl = f"Unique solution found for {var_name}: {sol_strings[0]} (subject to {', '.join(domain_restrictions)})."
+            else:
+                expl = f"Unique solution found for {var_name}: {sol_strings[0]}."
         else:
             sol_type = "multiple"
-            expl = f"Multiple solutions found for {var_name}: {', '.join(sol_strings)}."
+            if discarded_solutions:
+                disc_str = ", ".join(str(s) for s in discarded_solutions)
+                expl = (
+                    f"Multiple solutions found for {var_name}: {', '.join(sol_strings)} "
+                    f"(extraneous candidate(s) {var_name} = {disc_str} excluded due to domain restrictions)."
+                )
+            elif domain_restrictions:
+                expl = f"Multiple solutions found for {var_name}: {', '.join(sol_strings)} (subject to {', '.join(domain_restrictions)})."
+            else:
+                expl = f"Multiple solutions found for {var_name}: {', '.join(sol_strings)}."
 
         return SolveResult(
             status="solved",
@@ -515,6 +669,7 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
             variable=var_name,
             solution_type=sol_type,
             solutions=sol_strings,
+            domain_restrictions=domain_restrictions,
             explanation=expl,
         )
 
@@ -525,6 +680,7 @@ def solve_equation(equation_str: str, variable: Optional[str] = None) -> SolveRe
             variable=var_name,
             solution_type="invalid",
             solutions=[],
+            domain_restrictions=domain_restrictions,
             explanation=f"Error solving equation: {e}",
         )
 
@@ -813,6 +969,22 @@ def _run_tests():
 
     sec7 = simplify_expression("-(" * 30 + "x" + ")" * 30)
     _assert_test("Reject excessive nesting depth (>25 depth)", sec7.status, "invalid")
+
+    # --------------------------------------------------------------------------
+    # 5. Domain Restrictions & Preservation Tests
+    # --------------------------------------------------------------------------
+    print("\n--- 5. Domain Restrictions & Preservation ---")
+    d1 = solve_equation("(x**2 - 1) / (x - 1) = 2")
+    _assert_test("Removable singularity rejected: (x**2 - 1)/(x - 1) = 2 -> no_solution",
+                 (d1.solution_type, d1.solutions), ("no_solution", []))
+
+    d2 = solve_equation("x / x = 1")
+    _assert_test("Identity preserves restriction: x / x = 1 -> infinite_solutions (x != 0)",
+                 (d2.solution_type, d2.domain_restrictions), ("infinite_solutions", ["x != 0"]))
+
+    d3 = simplify_expression("x / x")
+    _assert_test("Simplification preserves restriction: x / x -> 1 for x != 0",
+                 (d3.simplified_expression, d3.domain_restrictions), ("1", ["x != 0"]))
 
     print("\n" + "=" * 75)
     print(f"Test Summary: {passed_count}/{total_count} tests passed.")
