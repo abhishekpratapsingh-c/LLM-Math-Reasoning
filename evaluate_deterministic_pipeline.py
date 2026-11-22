@@ -17,7 +17,7 @@ Evaluates:
 import os
 import sys
 import pandas as pd
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 # Ensure project root is in sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -38,8 +38,9 @@ SUPPORTED_CATEGORIES = [
 ]
 
 
-def run_evaluation() -> Dict[str, Any]:
+def run_evaluation(output_path: Optional[str] = None) -> Dict[str, Any]:
     """Runs the deterministic solver pipeline on all 300 GSM8K questions."""
+    target_output_path = output_path if output_path is not None else OUTPUT_PATH
     if not os.path.exists(DATASET_PATH):
         raise FileNotFoundError(f"Dataset not found at {DATASET_PATH}")
 
@@ -130,10 +131,12 @@ def run_evaluation() -> Dict[str, Any]:
         })
 
     # Save results to CSV safely
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    out_dir = os.path.dirname(target_output_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     out_df = pd.DataFrame(results_records)
-    out_df.to_csv(OUTPUT_PATH, index=False)
-    print(f"Saved detailed results to {OUTPUT_PATH}")
+    out_df.to_csv(target_output_path, index=False)
+    print(f"Saved detailed results to {target_output_path}")
 
     # Compute metrics
     coverage_rate = (solved_count / total_questions * 100) if total_questions > 0 else 0.0
@@ -213,4 +216,5 @@ def run_evaluation() -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    run_evaluation()
+    out_path = sys.argv[1] if len(sys.argv) > 1 else None
+    run_evaluation(output_path=out_path)
