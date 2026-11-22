@@ -299,7 +299,7 @@ def _verify_equation_to_equation_transition(
                     conds,
                 )
 
-    # 6. General solution-set comparison
+    # 6. General solution-set comparison (for algebraic equations with variables)
     prev_sol = solve_equation(prev_eq)
     if prev_sol.status == "solved" and curr_sol.status == "solved":
         if prev_sol.solutions and curr_sol.solutions and set(prev_sol.solutions) == set(curr_sol.solutions):
@@ -314,6 +314,25 @@ def _verify_equation_to_equation_transition(
                 "invalid",
                 "incorrect_transformation",
                 f"Invalid algebraic transformation: original equation has solution(s) {prev_sol.solutions}, but transformed equation has solution(s) {curr_sol.solutions}.",
+                domain_restrs,
+            )
+
+    # 7. Purely numeric equations without variables (e.g. 3 * 40 = 120 -> 3 * 40 = 130)
+    if not f1.free_symbols and not f2.free_symbols:
+        s_f1 = sympy.simplify(f1)
+        s_f2 = sympy.simplify(f2)
+        if s_f1 == 0 and s_f2 != 0:
+            return (
+                "invalid",
+                "incorrect_transformation",
+                f"Invalid arithmetic transformation: previous statement is mathematically correct, but transformed statement is false ({p_lhs_raw} != {r2}).",
+                domain_restrs,
+            )
+        elif s_f1 != s_f2:
+            return (
+                "invalid",
+                "incorrect_transformation",
+                "Invalid arithmetic transformation: equations are not mathematically equivalent.",
                 domain_restrs,
             )
 
@@ -402,8 +421,18 @@ def _verify_single_transition(
 
     if prev_label and curr_label:
         if prev_label == curr_label:
-            prev_rhs = getattr(prev_expr, "rhs_normalized", None) or getattr(prev_expr, "rhs_raw", None) or ""
-            curr_rhs = getattr(curr_expr, "rhs_normalized", None) or getattr(curr_expr, "rhs_raw", None) or ""
+            prev_rhs = (
+                getattr(prev_expr, "rhs_normalized", None)
+                or (prev_raw.split("=")[1].strip() if "=" in prev_raw else None)
+                or getattr(prev_expr, "rhs_value", None)
+                or ""
+            )
+            curr_rhs = (
+                getattr(curr_expr, "rhs_normalized", None)
+                or (curr_raw.split("=")[1].strip() if "=" in curr_raw else None)
+                or getattr(curr_expr, "rhs_value", None)
+                or ""
+            )
 
             if "=" not in prev_rhs and "=" not in curr_rhs:
                 p_sym, _, err1 = _parse_expression_with_denominators(prev_rhs, allow_variables=True)
