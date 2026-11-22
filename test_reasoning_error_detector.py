@@ -320,6 +320,123 @@ class TestReasoningErrorDetector(unittest.TestCase):
         self.assertEqual(rep_no_steps.status, "empty")
         self.assertEqual(rep_no_steps.total_steps, 0)
 
+    # --------------------------------------------------------------------------
+    # 14. Bug 1 Regression: Valid algebraic equation not flagged as false positive
+    # --------------------------------------------------------------------------
+    def test_bug1_valid_algebraic_equation_not_flagged(self):
+        text = (
+            "**Step 1: Solve equation**\n"
+            "2 * x + 4 = 10\n"
+            "2 * x = 14\n\n"
+            "Final Answer: 7"
+        )
+        report = detect_reasoning_errors(text)
+        step = report.step_reports[0]
+        self.assertEqual(len(step.issues), 2)
+
+        # First equation (2 * x + 4 = 10) must be VERIFIED, not an incorrect assertion
+        issue1 = step.issues[0]
+        self.assertEqual(issue1.error_category, "verified")
+        self.assertFalse(issue1.is_definite_error)
+        self.assertEqual(issue1.severity, "none")
+        self.assertIn("x = 3", issue1.explanation)
+
+        # Second equation (2 * x = 14) is an invalid transformation
+        issue2 = step.issues[1]
+        self.assertEqual(issue2.error_category, "invalid_transformation")
+        self.assertTrue(issue2.is_definite_error)
+        self.assertEqual(issue2.severity, "definite_error")
+        self.assertIn("3", issue2.explanation)
+        self.assertIn("7", issue2.explanation)
+
+        # Exactly 1 definite error in the report
+        self.assertEqual(report.total_definite_errors, 1)
+
+    # --------------------------------------------------------------------------
+    # 15. Bug 2 Regression: Valid algebraic equality with power operator not unsupported
+    # --------------------------------------------------------------------------
+    def test_bug2_algebraic_equation_with_powers_not_unsupported(self):
+        text = (
+            "**Step 1: Divide by variable**\n"
+            "x**2 = 2 * x\n"
+            "x = 2\n\n"
+            "Final Answer: 2"
+        )
+        report = detect_reasoning_errors(text)
+        step = report.step_reports[0]
+        self.assertEqual(len(step.issues), 2)
+
+        # First equation (x**2 = 2 * x) must be supported and VERIFIED
+        issue1 = step.issues[0]
+        self.assertEqual(issue1.error_category, "verified")
+        self.assertFalse(issue1.is_definite_error)
+        self.assertNotEqual(issue1.severity, "unsupported")
+
+        # Second equation (x = 2) must be flagged as lost_solution
+        issue2 = step.issues[1]
+        self.assertEqual(issue2.error_category, "lost_solution")
+        self.assertTrue(issue2.is_definite_error)
+        self.assertEqual(issue2.severity, "definite_error")
+        self.assertTrue(any("x != 0" in c for c in issue2.conditions))
+
+    # --------------------------------------------------------------------------
+    # 16. End-to-End Algebraic Verification & Transition Integration Test
+    # --------------------------------------------------------------------------
+    def test_e2e_algebraic_transformation_and_lost_solution(self):
+        # 1. Verify linear equation scenario: 2*x + 4 = 10 is not flagged, 2*x = 14 is flagged
+        text_linear = (
+            "**Step 1: Linear equation error**\n"
+            "2 * x + 4 = 10\n"
+            "2 * x = 14\n\n"
+            "Final Answer: 7"
+        )
+        report_linear = detect_reasoning_errors(text_linear)
+        self.assertEqual(report_linear.status, "has_errors")
+        self.assertEqual(report_linear.total_definite_errors, 1)
+        self.assertEqual(report_linear.flagged_error_steps, [1])
+
+        # 2*x + 4 = 10 is not flagged
+        self.assertEqual(report_linear.step_reports[0].issues[0].error_category, "verified")
+        self.assertFalse(report_linear.step_reports[0].issues[0].is_definite_error)
+        # 2*x = 14 is flagged as invalid transformation
+        self.assertEqual(report_linear.step_reports[0].issues[1].error_category, "invalid_transformation")
+        self.assertTrue(report_linear.step_reports[0].issues[1].is_definite_error)
+
+        # 2. Verify quadratic equation scenario: x**2 = 2*x is not unsupported, x = 2 is flagged
+        text_quad = (
+            "**Step 1: Quadratic equation root loss**\n"
+            "x**2 = 2 * x\n"
+            "x = 2\n\n"
+            "Final Answer: 2"
+        )
+        report_quad = detect_reasoning_errors(text_quad)
+        self.assertEqual(report_quad.status, "has_errors")
+        self.assertEqual(report_quad.total_definite_errors, 1)
+        self.assertEqual(report_quad.flagged_error_steps, [1])
+
+        # x**2 = 2*x is not unsupported (verified)
+        self.assertEqual(report_quad.step_reports[0].issues[0].error_category, "verified")
+        self.assertFalse(report_quad.step_reports[0].issues[0].is_definite_error)
+        # x = 2 is flagged for losing x = 0
+        self.assertEqual(report_quad.step_reports[0].issues[1].error_category, "lost_solution")
+        self.assertTrue(report_quad.step_reports[0].issues[1].is_definite_error)
+        self.assertTrue(any("x != 0" in c for c in report_quad.step_reports[0].issues[1].conditions))
+
+        # 3. Multi-step reasoning with distinct variables across steps
+        text_multi = (
+            "**Step 1: Linear equation error**\n"
+            "2 * x + 4 = 10\n"
+            "2 * x = 14\n\n"
+            "**Step 2: Quadratic equation root loss**\n"
+            "y**2 = 2 * y\n"
+            "y = 2\n\n"
+            "Final Answer: 2"
+        )
+        report_multi = detect_reasoning_errors(text_multi)
+        self.assertEqual(report_multi.status, "has_errors")
+        self.assertEqual(report_multi.total_definite_errors, 2)
+        self.assertEqual(report_multi.flagged_error_steps, [1, 2])
+
 
 if __name__ == "__main__":
     unittest.main()

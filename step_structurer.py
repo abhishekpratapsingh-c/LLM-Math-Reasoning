@@ -120,6 +120,22 @@ def _is_single_identifier(text: str) -> bool:
     return bool(re.match(r"^[a-zA-Z_]\w*$", s))
 
 
+def _clean_token_preserving_math(token: str) -> str:
+    """Strips markdown bold, italics, backticks, leading bullets from edges while preserving math operators like '**'."""
+    t = token.strip()
+    while t.startswith("**") and t.endswith("**") and len(t) >= 4:
+        t = t[2:-2].strip()
+    while t.startswith("__") and t.endswith("__") and len(t) >= 4:
+        t = t[2:-2].strip()
+    while t.startswith("`") and t.endswith("`") and len(t) >= 2:
+        t = t[1:-1].strip()
+    t = re.sub(r"^[\*\•\–\—\s]+", "", t).strip()
+    t = re.sub(r"^\-\s+", "", t).strip()
+    while t and t[-1] in ".,;:!?":
+        t = t[:-1].strip()
+    return t.strip()
+
+
 def _clean_math_expression(raw_expr: str) -> str:
     """
     Cleans arithmetic expressions: strips currency symbols, normalizes operators,
@@ -129,7 +145,11 @@ def _clean_math_expression(raw_expr: str) -> str:
         return ""
     prep = _preprocess_text(raw_expr)
     side_clean = _clean_side(prep)
-    # Strip unit words while preserving operators and numbers
+    # If the expression already forms a syntactically valid AST expression (e.g. algebraic variables, powers),
+    # preserve it directly without stripping variables as if they were units.
+    if _check_ast_validity(side_clean):
+        return re.sub(r"\s+", " ", side_clean).strip()
+    # Otherwise strip unit words while preserving operators and numbers
     units_clean = _strip_units(side_clean)
     # Final cleanup of extraneous spaces
     cleaned = re.sub(r"\s+", " ", units_clean).strip()
@@ -151,9 +171,9 @@ def _structure_equality_clause(step_num: int, clause: str) -> List[StructuredExp
         raw_lhs = parts[i].strip()
         raw_rhs = parts[i + 1].strip()
 
-        # Clean token wrappers
-        cand_lhs = _clean_token(raw_lhs)
-        cand_rhs = _clean_token(raw_rhs)
+        # Clean token wrappers while preserving math operators (like '**')
+        cand_lhs = _clean_token_preserving_math(raw_lhs)
+        cand_rhs = _clean_token_preserving_math(raw_rhs)
 
         # Remove leading conjunctions from LHS (e.g. 'So', 'Therefore', 'Let')
         cand_lhs = re.sub(r"^(?:let|so|then|and|therefore|we\s+have)\s+", "", cand_lhs, flags=re.IGNORECASE).strip()

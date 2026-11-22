@@ -302,6 +302,15 @@ def _verify_equation_to_equation_transition(
     # 6. General solution-set comparison (for algebraic equations with variables)
     prev_sol = solve_equation(prev_eq)
     if prev_sol.status == "solved" and curr_sol.status == "solved":
+        # If equations involve completely different variables without relationship, they are distinct
+        if prev_sol.variable and curr_sol.variable and prev_sol.variable != curr_sol.variable:
+            return (
+                "unsupported",
+                "unrelated",
+                f"Equations involve distinct variables ('{prev_sol.variable}' vs '{curr_sol.variable}'); no direct mathematical transformation.",
+                domain_restrs,
+            )
+
         if prev_sol.solutions and curr_sol.solutions and set(prev_sol.solutions) == set(curr_sol.solutions):
             return (
                 "valid",
