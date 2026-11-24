@@ -1,3 +1,4 @@
+import math
 import os
 import re
 import sys
@@ -138,7 +139,45 @@ def get_llm_client(provider: str):
             )
         # Default to a verified, currently active Gemini text model; fully configurable via GEMINI_MODEL
         model_name = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
-        client = genai.Client(api_key=api_key)
+
+        # Configure finite HTTP request timeout (default 90s, passed in milliseconds)
+        timeout_env = os.getenv("GEMINI_TIMEOUT_SECONDS")
+        if timeout_env is None:
+            timeout_seconds = 90.0
+        else:
+            try:
+                timeout_seconds = float(timeout_env)
+            except (ValueError, TypeError):
+                raise ValueError(
+                    f"Invalid GEMINI_TIMEOUT_SECONDS '{timeout_env}': must be a positive finite number."
+                )
+            if math.isnan(timeout_seconds) or math.isinf(timeout_seconds) or timeout_seconds <= 0:
+                raise ValueError(
+                    f"Invalid GEMINI_TIMEOUT_SECONDS '{timeout_env}': must be a positive finite number."
+                )
+
+        try:
+            timeout_ms_float = timeout_seconds * 1000.0
+            if math.isnan(timeout_ms_float) or math.isinf(timeout_ms_float):
+                raise ValueError(
+                    f"Invalid GEMINI_TIMEOUT_SECONDS '{timeout_env}': converted milliseconds value is not finite."
+                )
+            timeout_ms = max(1, int(round(timeout_ms_float)))
+            if timeout_ms > sys.maxsize:
+                raise ValueError(
+                    f"Invalid GEMINI_TIMEOUT_SECONDS '{timeout_env}': converted milliseconds value exceeds maximum system integer size."
+                )
+        except (OverflowError, ValueError) as err:
+            if isinstance(err, ValueError):
+                raise
+            raise ValueError(
+                f"Invalid GEMINI_TIMEOUT_SECONDS '{timeout_env}': cannot be represented safely as milliseconds."
+            ) from err
+
+        client = genai.Client(
+            api_key=api_key,
+            http_options={"timeout": timeout_ms},
+        )
         return client, model_name
 
     else:
