@@ -1,0 +1,432 @@
+{
+  "metadata": {
+    "evaluation_name": "Objective 29: Deterministic Solver-Only Reasoning Verification",
+    "timestamp_utc": "2026-11-24T19:36:01.980054+00:00",
+    "canonical_dataset_size": 200,
+    "total_evaluated_cases": 200,
+    "mode": "deterministic_solver_only",
+    "llm_api_calls": 0,
+    "components_used": [
+      "step_extractor.py",
+      "step_structurer.py",
+      "step_verifier.py",
+      "step_transition_verifier.py",
+      "reasoning_error_detector.py",
+      "verification_report.py",
+      "symbolic_verifier.py",
+      "symbolic_solver.py"
+    ]
+  },
+  "overall": {
+    "subset_name": "Overall Dataset",
+    "total_cases": 200,
+    "supported_cases": 191,
+    "unsupported_cases": 9,
+    "gold_correct_count": 80,
+    "gold_incorrect_count": 120,
+    "confusion_matrix": {
+      "true_positives": 59,
+      "false_positives": 6,
+      "true_negatives": 66,
+      "false_negatives_explicit": 60,
+      "false_negatives_unsupported": 1,
+      "total_false_negatives": 61,
+      "abstentions_on_correct": 8,
+      "total_unsupported": 9
+    },
+    "accuracy_metrics": {
+      "strict_accuracy": 0.625,
+      "supported_case_accuracy": 0.6545,
+      "supported_coverage": 0.955,
+      "unsupported_rate": 0.045
+    },
+    "error_detection_metrics": {
+      "precision": 0.9077,
+      "recall": 0.4917,
+      "f1_score": 0.6378
+    },
+    "step_localization": {
+      "step_match_count": 50,
+      "tp_with_gold_step_count": 59,
+      "localization_accuracy": 0.8475
+    }
+  },
+  "cohorts": {
+    "sound_reasoning_none": {
+      "subset_name": "Cohort 1: Sound Reasoning (none)",
+      "total_cases": 60,
+      "supported_cases": 60,
+      "unsupported_cases": 0,
+      "gold_correct_count": 60,
+      "gold_incorrect_count": 0,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 4,
+        "true_negatives": 56,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.9333,
+        "supported_case_accuracy": 0.9333,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "unsupported_conceptual": {
+      "subset_name": "Cohort 2: Unsupported Conceptual Equations",
+      "total_cases": 10,
+      "supported_cases": 2,
+      "unsupported_cases": 8,
+      "gold_correct_count": 10,
+      "gold_incorrect_count": 0,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 2,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 8,
+        "total_unsupported": 8
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.0,
+        "supported_case_accuracy": 0.0,
+        "supported_coverage": 0.2,
+        "unsupported_rate": 0.8
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "conditional_warnings": {
+      "subset_name": "Cohort 3: Conditional Warning Cases",
+      "total_cases": 10,
+      "supported_cases": 10,
+      "unsupported_cases": 0,
+      "gold_correct_count": 10,
+      "gold_incorrect_count": 0,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 0,
+        "true_negatives": 10,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "supported_case_accuracy": 1.0,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "all_incorrect_cases": {
+      "subset_name": "Cohort 4: All Injected Errors",
+      "total_cases": 120,
+      "supported_cases": 119,
+      "unsupported_cases": 1,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 120,
+      "confusion_matrix": {
+        "true_positives": 59,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 60,
+        "false_negatives_unsupported": 1,
+        "total_false_negatives": 61,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 1
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.4917,
+        "supported_case_accuracy": 0.4958,
+        "supported_coverage": 0.9917,
+        "unsupported_rate": 0.0083
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 0.4917,
+        "f1_score": 0.6592
+      },
+      "step_localization": {
+        "step_match_count": 50,
+        "tp_with_gold_step_count": 59,
+        "localization_accuracy": 0.8475
+      }
+    }
+  },
+  "incorrect_categories": {
+    "invalid_transformation": {
+      "subset_name": "Category: invalid_transformation",
+      "total_cases": 29,
+      "supported_cases": 28,
+      "unsupported_cases": 1,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 29,
+      "confusion_matrix": {
+        "true_positives": 8,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 20,
+        "false_negatives_unsupported": 1,
+        "total_false_negatives": 21,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 1
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.2759,
+        "supported_case_accuracy": 0.2857,
+        "supported_coverage": 0.9655,
+        "unsupported_rate": 0.0345
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 0.2759,
+        "f1_score": 0.4324
+      },
+      "step_localization": {
+        "step_match_count": 5,
+        "tp_with_gold_step_count": 8,
+        "localization_accuracy": 0.625
+      }
+    },
+    "arithmetic_error": {
+      "subset_name": "Category: arithmetic_error",
+      "total_cases": 26,
+      "supported_cases": 26,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 26,
+      "confusion_matrix": {
+        "true_positives": 25,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 1,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 1,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.9615,
+        "supported_case_accuracy": 0.9615,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 0.9615,
+        "f1_score": 0.9804
+      },
+      "step_localization": {
+        "step_match_count": 25,
+        "tp_with_gold_step_count": 25,
+        "localization_accuracy": 1.0
+      }
+    },
+    "domain_violation": {
+      "subset_name": "Category: domain_violation",
+      "total_cases": 17,
+      "supported_cases": 17,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 17,
+      "confusion_matrix": {
+        "true_positives": 8,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 9,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 9,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.4706,
+        "supported_case_accuracy": 0.4706,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 0.4706,
+        "f1_score": 0.64
+      },
+      "step_localization": {
+        "step_match_count": 4,
+        "tp_with_gold_step_count": 8,
+        "localization_accuracy": 0.5
+      }
+    },
+    "incorrect_setup": {
+      "subset_name": "Category: incorrect_setup",
+      "total_cases": 17,
+      "supported_cases": 17,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 17,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 17,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 17,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.0,
+        "supported_case_accuracy": 0.0,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "lost_solution": {
+      "subset_name": "Category: lost_solution",
+      "total_cases": 16,
+      "supported_cases": 16,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 16,
+      "confusion_matrix": {
+        "true_positives": 3,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 13,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 13,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.1875,
+        "supported_case_accuracy": 0.1875,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 0.1875,
+        "f1_score": 0.3158
+      },
+      "step_localization": {
+        "step_match_count": 2,
+        "tp_with_gold_step_count": 3,
+        "localization_accuracy": 0.6667
+      }
+    },
+    "division_by_zero": {
+      "subset_name": "Category: division_by_zero",
+      "total_cases": 15,
+      "supported_cases": 15,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 15,
+      "confusion_matrix": {
+        "true_positives": 15,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "supported_case_accuracy": 1.0,
+        "supported_coverage": 1.0,
+        "unsupported_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 14,
+        "tp_with_gold_step_count": 15,
+        "localization_accuracy": 0.9333
+      }
+    }
+  },
+  "symbolic_limitations": {
+    "subset_name": "Symbolic Limitation Boundary Cases",
+    "total_cases": 10,
+    "supported_cases": 9,
+    "unsupported_cases": 1,
+    "gold_correct_count": 0,
+    "gold_incorrect_count": 10,
+    "confusion_matrix": {
+      "true_positives": 3,
+      "false_positives": 0,
+      "true_negatives": 0,
+      "false_negatives_explicit": 6,
+      "false_negatives_unsupported": 1,
+      "total_false_negatives": 7,
+      "abstentions_on_correct": 0,
+      "total_unsupported": 1
+    },
+    "accuracy_metrics": {
+      "strict_accuracy": 0.3,
+      "supported_case_accuracy": 0.3333,
+      "supported_coverage": 0.9,
+      "unsupported_rate": 0.1
+    },
+    "error_detection_metrics": {
+      "precision": 1.0,
+      "recall": 0.3,
+      "f1_score": 0.4615
+    },
+    "step_localization": {
+      "step_match_count": 2,
+      "tp_with_gold_step_count": 3,
+      "localization_accuracy": 0.6667
+    }
+  }
+}
