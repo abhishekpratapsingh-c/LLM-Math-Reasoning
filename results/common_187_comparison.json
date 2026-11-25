@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "scope": "Exact 187 Common Cases",
+    "timestamp_utc": "2026-11-24T19:50:13.243066+00:00",
+    "excluded_13_cases": [
+      "eval_136",
+      "eval_140",
+      "eval_170",
+      "eval_171",
+      "eval_173",
+      "eval_175",
+      "eval_178",
+      "eval_179",
+      "eval_181",
+      "eval_182",
+      "eval_183",
+      "eval_184",
+      "eval_185"
+    ]
+  },
+  "systems": {
+    "objective_27": {
+      "name": "Objective 27 (LLM Baseline)",
+      "total_cases": 187,
+      "confusion_matrix": {
+        "tp": 104,
+        "fp": 3,
+        "tn": 77,
+        "fn_exp": 3,
+        "fn_uns": 0
+      },
+      "strict_accuracy": 0.9679,
+      "precision": 0.972,
+      "recall": 0.972,
+      "f1_score": 0.972,
+      "step_localization_accuracy": 0.9712,
+      "step_match_count": 101,
+      "tp_with_step_count": 104
+    },
+    "objective_28": {
+      "name": "Objective 28 (Improved LLM)",
+      "total_cases": 187,
+      "confusion_matrix": {
+        "tp": 104,
+        "fp": 3,
+        "tn": 77,
+        "fn_exp": 3,
+        "fn_uns": 0
+      },
+      "strict_accuracy": 0.9679,
+      "precision": 0.972,
+      "recall": 0.972,
+      "f1_score": 0.972,
+      "step_localization_accuracy": 0.9615,
+      "step_match_count": 100,
+      "tp_with_step_count": 104
+    },
+    "objective_29": {
+      "name": "Objective 29 (Solver-Only)",
+      "total_cases": 187,
+      "confusion_matrix": {
+        "tp": 58,
+        "fp": 6,
+        "tn": 66,
+        "fn_exp": 48,
+        "fn_uns": 1
+      },
+      "strict_accuracy": 0.6631,
+      "precision": 0.9062,
+      "recall": 0.5421,
+      "f1_score": 0.6784,
+      "step_localization_accuracy": 0.8448,
+      "step_match_count": 49,
+      "tp_with_step_count": 58
+    },
+    "objective_30": {
+      "name": "Objective 30 (Hybrid Neuro-Symbolic)",
+      "total_cases": 187,
+      "confusion_matrix": {
+        "tp": 107,
+        "fp": 8,
+        "tn": 72,
+        "fn_exp": 0,
+        "fn_uns": 0
+      },
+      "strict_accuracy": 0.9572,
+      "precision": 0.9304,
+      "recall": 1.0,
+      "f1_score": 0.964,
+      "step_localization_accuracy": 0.972,
+      "step_match_count": 104,
+      "tp_with_step_count": 107
+    }
+  }
+}

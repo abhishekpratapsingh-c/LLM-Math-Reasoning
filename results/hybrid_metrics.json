@@ -1,0 +1,1746 @@
+{
+  "metadata": {
+    "evaluation_name": "Objective 30: Hybrid LLM + Deterministic Solver Reasoning Evaluation",
+    "timestamp_utc": "2026-11-24T19:50:13.227224+00:00",
+    "canonical_dataset_size": 200,
+    "total_evaluated_cases": 200,
+    "mode": "hybrid_neuro_symbolic",
+    "llm_source": "Objective 27 (Groq/Gemini completed predictions, 200 cases)",
+    "solver_source": "Objective 29 (SymPy deterministic pipeline, 200 cases)",
+    "external_api_calls": 0
+  },
+  "overall": {
+    "subset_name": "Overall Dataset",
+    "total_cases": 200,
+    "supported_cases": 200,
+    "unsupported_cases": 0,
+    "gold_correct_count": 80,
+    "gold_incorrect_count": 120,
+    "confusion_matrix": {
+      "true_positives": 120,
+      "false_positives": 8,
+      "true_negatives": 72,
+      "false_negatives_explicit": 0,
+      "false_negatives_unsupported": 0,
+      "total_false_negatives": 0,
+      "abstentions_on_correct": 0,
+      "total_unsupported": 0
+    },
+    "accuracy_metrics": {
+      "strict_accuracy": 0.96,
+      "decisive_accuracy": 0.96,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "error_detection_metrics": {
+      "precision": 0.9375,
+      "recall": 1.0,
+      "f1_score": 0.9677
+    },
+    "step_localization": {
+      "step_match_count": 117,
+      "tp_with_gold_step_count": 120,
+      "localization_accuracy": 0.975
+    }
+  },
+  "cohorts": {
+    "sound_reasoning_none": {
+      "subset_name": "Cohort 1: Sound Reasoning (none)",
+      "total_cases": 60,
+      "supported_cases": 60,
+      "unsupported_cases": 0,
+      "gold_correct_count": 60,
+      "gold_incorrect_count": 0,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 5,
+        "true_negatives": 55,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.9167,
+        "decisive_accuracy": 0.9167,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "unsupported_conceptual": {
+      "subset_name": "Cohort 2: Unsupported Conceptual Equations",
+      "total_cases": 10,
+      "supported_cases": 10,
+      "unsupported_cases": 0,
+      "gold_correct_count": 10,
+      "gold_incorrect_count": 0,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 3,
+        "true_negatives": 7,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.7,
+        "decisive_accuracy": 0.7,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "conditional_warnings": {
+      "subset_name": "Cohort 3: Conditional Warning Cases",
+      "total_cases": 10,
+      "supported_cases": 10,
+      "unsupported_cases": 0,
+      "gold_correct_count": 10,
+      "gold_incorrect_count": 0,
+      "confusion_matrix": {
+        "true_positives": 0,
+        "false_positives": 0,
+        "true_negatives": 10,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "step_localization": {
+        "step_match_count": 0,
+        "tp_with_gold_step_count": 0,
+        "localization_accuracy": 0.0
+      }
+    },
+    "all_incorrect_cases": {
+      "subset_name": "Cohort 4: All Injected Errors",
+      "total_cases": 120,
+      "supported_cases": 120,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 120,
+      "confusion_matrix": {
+        "true_positives": 120,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 117,
+        "tp_with_gold_step_count": 120,
+        "localization_accuracy": 0.975
+      }
+    }
+  },
+  "incorrect_categories": {
+    "invalid_transformation": {
+      "subset_name": "Category: invalid_transformation",
+      "total_cases": 29,
+      "supported_cases": 29,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 29,
+      "confusion_matrix": {
+        "true_positives": 29,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 29,
+        "tp_with_gold_step_count": 29,
+        "localization_accuracy": 1.0
+      }
+    },
+    "arithmetic_error": {
+      "subset_name": "Category: arithmetic_error",
+      "total_cases": 26,
+      "supported_cases": 26,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 26,
+      "confusion_matrix": {
+        "true_positives": 26,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 26,
+        "tp_with_gold_step_count": 26,
+        "localization_accuracy": 1.0
+      }
+    },
+    "domain_violation": {
+      "subset_name": "Category: domain_violation",
+      "total_cases": 17,
+      "supported_cases": 17,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 17,
+      "confusion_matrix": {
+        "true_positives": 17,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 14,
+        "tp_with_gold_step_count": 17,
+        "localization_accuracy": 0.8235
+      }
+    },
+    "incorrect_setup": {
+      "subset_name": "Category: incorrect_setup",
+      "total_cases": 17,
+      "supported_cases": 17,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 17,
+      "confusion_matrix": {
+        "true_positives": 17,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 17,
+        "tp_with_gold_step_count": 17,
+        "localization_accuracy": 1.0
+      }
+    },
+    "lost_solution": {
+      "subset_name": "Category: lost_solution",
+      "total_cases": 16,
+      "supported_cases": 16,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 16,
+      "confusion_matrix": {
+        "true_positives": 16,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 16,
+        "tp_with_gold_step_count": 16,
+        "localization_accuracy": 1.0
+      }
+    },
+    "division_by_zero": {
+      "subset_name": "Category: division_by_zero",
+      "total_cases": 15,
+      "supported_cases": 15,
+      "unsupported_cases": 0,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 15,
+      "confusion_matrix": {
+        "true_positives": 15,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_unsupported": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_unsupported": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 15,
+        "tp_with_gold_step_count": 15,
+        "localization_accuracy": 1.0
+      }
+    }
+  },
+  "symbolic_limitations": {
+    "subset_name": "Symbolic Limitation Boundary Cases",
+    "total_cases": 10,
+    "supported_cases": 10,
+    "unsupported_cases": 0,
+    "gold_correct_count": 0,
+    "gold_incorrect_count": 10,
+    "confusion_matrix": {
+      "true_positives": 10,
+      "false_positives": 0,
+      "true_negatives": 0,
+      "false_negatives_explicit": 0,
+      "false_negatives_unsupported": 0,
+      "total_false_negatives": 0,
+      "abstentions_on_correct": 0,
+      "total_unsupported": 0
+    },
+    "accuracy_metrics": {
+      "strict_accuracy": 1.0,
+      "decisive_accuracy": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "error_detection_metrics": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "step_localization": {
+      "step_match_count": 10,
+      "tp_with_gold_step_count": 10,
+      "localization_accuracy": 1.0
+    }
+  },
+  "fusion_analysis": {
+    "detected_by_hybrid_llm_missed_count": 3,
+    "detected_by_hybrid_llm_missed": [
+      {
+        "id": "eval_092",
+        "error_category": "arithmetic_error",
+        "gold_step": 1,
+        "solver_step": 1,
+        "solver_evidence": "Mathematical assertion is incorrect: Equation is mathematically incorrect: LHS (15 + 7 = 22) does not equal RHS (21 = 21).",
+        "llm_explanation": "The perimeter of a rectangle is calculated using the formula P = 2(l + w). The reasoning correctly adds the length and width (15 + 7 = 22, wait\u2014re-evaluating). Correction: 15 + 7 = 22, not 21. The reasoning contains an arithmetic error in Step 1."
+      },
+      {
+        "id": "eval_105",
+        "error_category": "arithmetic_error",
+        "gold_step": 1,
+        "solver_step": 1,
+        "solver_evidence": "Mathematical assertion is incorrect: Equation is mathematically incorrect: LHS (1000 - 875 = 125) does not equal RHS (225 = 225).",
+        "llm_explanation": "The subtraction 1000 - 875 is performed correctly, resulting in 125. Wait, re-evaluating: 1000 - 875 = 125. The provided trace claims 225, which is an arithmetic error."
+      },
+      {
+        "id": "eval_118",
+        "error_category": "invalid_transformation",
+        "gold_step": 2,
+        "solver_step": 2,
+        "solver_evidence": "Invalid algebraic transformation: original equation has solution(s) ['13'], but transformed equation has solution(s) ['7'].",
+        "llm_explanation": "The expansion in Step 1 is correct, and the algebraic manipulation in Step 2 correctly isolates x by subtracting 2x from both sides and adding 3 to both sides, resulting in the correct solution."
+      }
+    ],
+    "detected_by_hybrid_solver_missed_count": 61,
+    "detected_by_hybrid_solver_missed": [
+      {
+        "id": "eval_107",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, the distributive property was applied incorrectly; the 3 must be multiplied by both x and 2, resulting in 3x + 6 = 15, not 3x + 2 = 15."
+      },
+      {
+        "id": "eval_111",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning contains a sign error; dividing -3x = 12 by -3 results in x = -4, not 4. The step explicitly acknowledges omitting the negative sign, which is an invalid algebraic transformation."
+      },
+      {
+        "id": "eval_112",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The product rule for exponents states that when multiplying terms with the same base, the exponents should be added (x^a * x^b = x^(a+b)), not multiplied. Therefore, x^2 * x^3 should be x^(2+3) = x^5."
+      },
+      {
+        "id": "eval_113",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, the reasoning incorrectly states to 'subtract from right' when adding 10 to both sides; adding 10 to 20 results in 30, not 10. Consequently, the resulting equation 5x = 10 is mathematically incorrect."
+      },
+      {
+        "id": "eval_114",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The square root of a sum is not equal to the sum of the square roots; the operation sqrt(a + b) = sqrt(a) + sqrt(b) is algebraically invalid. For example, if x=3, sqrt(3^2 + 16) = sqrt(25) = 5, whereas x + 4 = 7."
+      },
+      {
+        "id": "eval_115",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The cross-multiplication of x/3 = 4/5 should result in 5x = 12, not 5 = 12x. Consequently, the final answer is incorrect."
+      },
+      {
+        "id": "eval_116",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, the distribution of 4 was performed incorrectly; 4 multiplied by -3 should result in -12, not -3. Consequently, the entire subsequent derivation is based on an erroneous equation."
+      },
+      {
+        "id": "eval_119",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The power of a power rule states that (x^a)^b = x^(a*b). The reasoning incorrectly adds the exponents (3+2=5) instead of multiplying them (3*2=6)."
+      },
+      {
+        "id": "eval_120",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, subtracting 5x and adding 2 to both sides of 7x - 2 = 5x + 8 results in 2x = 10, not 2x = 6. Consequently, the final answer is incorrect."
+      },
+      {
+        "id": "eval_121",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly adds the denominators of fractions instead of finding a common denominator. The correct method is to rewrite x/2 + x/3 as (3x + 2x) / 6 = 5x/6, leading to the correct solution x = 12."
+      },
+      {
+        "id": "eval_122",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, the transposition of 6 to the other side of the equation requires changing its sign from positive to negative (3x = -6). The reasoning trace failed to negate the 6, leading to an incorrect final answer."
+      },
+      {
+        "id": "eval_123",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly 'drops' the negative sign instead of performing a valid algebraic operation, such as multiplying or dividing both sides by -1. Consequently, the final answer is incorrect, as the solution to -x = 5 is x = -5."
+      },
+      {
+        "id": "eval_124",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, the expansion of 2*(x - 4) is incorrectly calculated as 2x - 4 instead of 2x - 8. This distributive property error leads to an incorrect final answer."
+      },
+      {
+        "id": "eval_125",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly applies division by 2 instead of taking the square root to solve for x. Furthermore, it fails to account for the negative root, as x^2 = 16 implies x = 4 or x = -4."
+      },
+      {
+        "id": "eval_126",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, the reasoning fails to maintain the equality of the equation because the division by 6 was not applied to the right side (24). To maintain equality, both sides must be divided by 6, which would result in x + 2 = 4."
+      },
+      {
+        "id": "eval_127",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning fails to apply the distributive property (FOIL method) correctly, omitting the middle terms (3x and 2x) that result from multiplying the inner and outer terms."
+      },
+      {
+        "id": "eval_128",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, subtracting 15 from both sides of 5x + 15 = 5 results in 5x = -10, not 5x = 10. Consequently, the final answer is incorrect."
+      },
+      {
+        "id": "eval_129",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 1, subtracting 2x from 4x results in 2x, but adding 7 to 3 results in 10, not 4. The correct equation after isolating variables should be 2x = 10, leading to x = 5."
+      },
+      {
+        "id": "eval_130",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "To isolate x in the equation x/4 = 3, one must multiply both sides by 4, not divide. The reasoning incorrectly applies the inverse operation, leading to an incorrect result of 3/4 instead of 12."
+      },
+      {
+        "id": "eval_132",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by x is an invalid operation when x could be zero, as it leads to the loss of the solution x = 0. The correct approach is to subtract 5x from both sides and factor the expression x(x - 5) = 0."
+      },
+      {
+        "id": "eval_133",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by (x - 1) is an invalid operation because it assumes x \u2260 1, thereby losing the solution x = 1. The correct approach is to subtract 2(x - 1) from both sides and factor out (x - 1) to identify both roots, x = 1 and x = -1."
+      },
+      {
+        "id": "eval_135",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Step 1 involves dividing both sides by x, which is an invalid operation when x = 0 and results in the loss of the solution x = 0. The Zero Product Property should have been used instead to identify both roots, 0 and 4."
+      },
+      {
+        "id": "eval_136",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by 3x is an invalid operation because it assumes x is non-zero, which leads to the loss of the solution x = 0. The correct approach is to subtract 9x from both sides and factor the expression to find both solutions, 0 and 3."
+      },
+      {
+        "id": "eval_137",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by (x + 2) is an invalid operation because it assumes x + 2 \u2260 0, thereby losing the solution where x = -2. The correct approach is to subtract 4(x + 2) from both sides and factor, which reveals two solutions: x = 9 and x = -2."
+      },
+      {
+        "id": "eval_138",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by x^2 is an invalid operation because it assumes x is non-zero, thereby losing the solution x = 0. The correct approach is to subtract x^2 from both sides and factor the expression to identify all roots."
+      },
+      {
+        "id": "eval_140",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by (2x - 6) is an invalid operation because it assumes (2x - 6) is non-zero, which leads to the loss of the solution x = 3. The Zero Product Property should have been used instead to identify both possible roots."
+      },
+      {
+        "id": "eval_141",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides of an equation by a variable without considering the case where that variable equals zero leads to the loss of the solution x = 0. The correct approach is to subtract 10x from both sides and factor the expression x(x - 10) = 0."
+      },
+      {
+        "id": "eval_142",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by x is an invalid operation because it assumes x is non-zero, thereby losing the solution x = 0. The correct approach is to set the equation to zero and factor: x(2x - 5) - x = 0, which leads to x(2x - 6) = 0, yielding solutions x = 0 and x = 3."
+      },
+      {
+        "id": "eval_143",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by (x - 3) is an invalid operation because it assumes x - 3 is non-zero, which causes the loss of the solution x = 3. The correct approach is to subtract (x - 3) from both sides and factor the expression to find both roots."
+      },
+      {
+        "id": "eval_144",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by 4x is an invalid operation because it assumes x is non-zero, thereby losing the solution x = 0. The correct approach is to subtract 8x from both sides and factor the expression to find both roots, 0 and 2."
+      },
+      {
+        "id": "eval_145",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Dividing both sides by x^2 is an invalid operation because it assumes x is non-zero, which leads to the loss of the solution x = 0. The correct approach is to factor the expression as x^2(x + 2) = 0, yielding solutions x = 0 and x = -2."
+      },
+      {
+        "id": "eval_163",
+        "error_category": "domain_violation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The equation sqrt(2x - 5) = -3 has no real solution because the principal square root function cannot yield a negative value. Squaring both sides is an algebraic transformation that introduces an extraneous solution (x=7), which fails when substituted back into the original equation."
+      },
+      {
+        "id": "eval_165",
+        "error_category": "domain_violation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The principal square root function, by definition, yields a non-negative result for all real numbers in its domain; therefore, sqrt(x) = -5 has no real solution. Squaring both sides is an implication that introduces an extraneous solution (25), which does not satisfy the original equation."
+      },
+      {
+        "id": "eval_166",
+        "error_category": "domain_violation",
+        "gold_step": 3,
+        "llm_step": 3,
+        "solver_status": "verified",
+        "llm_explanation": "Step 3 incorrectly claims that x=0 is a solution; however, substituting x=0 into the original equation results in division by zero, making it an extraneous value. Furthermore, the final answer provided (0) is not a solution to the equation, as the only valid solution is x = 1/2."
+      },
+      {
+        "id": "eval_167",
+        "error_category": "domain_violation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The equation sqrt(3x - 2) = -4 has no real solution because the principal square root function is non-negative by definition. Squaring both sides is an algebraic transformation that introduces an extraneous solution (x=6), which does not satisfy the original equation (sqrt(16) = 4, not -4)."
+      },
+      {
+        "id": "eval_170",
+        "error_category": "domain_violation",
+        "gold_step": 3,
+        "llm_step": 3,
+        "solver_status": "verified",
+        "llm_explanation": "The value x = -1 is an extraneous solution because it makes the original denominator (x^2 - 1) equal to zero, which is undefined. Step 3 incorrectly identifies this as a valid solution rather than excluding it from the domain."
+      },
+      {
+        "id": "eval_171",
+        "error_category": "domain_violation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The principal square root function is defined to be non-negative, so sqrt(5 - x) = -1 has no real solution. Squaring both sides is an implication, not an equivalence, and the resulting value x = 4 is an extraneous solution because sqrt(5 - 4) = 1, not -1."
+      },
+      {
+        "id": "eval_172",
+        "error_category": "domain_violation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "Multiplying both sides by (x + 4) is only valid if x + 4 \u2260 0. Since x = -4 makes the denominator zero, the original equation is undefined at that point, meaning there is no solution."
+      },
+      {
+        "id": "eval_175",
+        "error_category": "domain_violation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The equation sqrt(2x + 3) = -1 has no real solution because the principal square root function is non-negative by definition. Squaring both sides is an algebraic transformation that introduces an extraneous solution, as -1 cannot be the result of a square root."
+      },
+      {
+        "id": "eval_176",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The problem states Alice is 5 years older than twice Bob's age, which requires addition (2 * 10 + 5 = 25). The reasoning trace incorrectly sets up the equation using subtraction instead of addition."
+      },
+      {
+        "id": "eval_177",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The ratio 3:5 implies there are 3+5=8 total parts. The correct calculation for the number of apples is 40 * (3/8) = 15, whereas the proposed trace incorrectly uses a denominator of 5."
+      },
+      {
+        "id": "eval_178",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly assumes that percentage changes are additive; in reality, they are multiplicative. A 20% increase followed by a 20% decrease results in a final price of $96 (100 * 1.20 * 0.80 = 96)."
+      },
+      {
+        "id": "eval_179",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The harmonic mean formula is used for equal distances, not equal times. For equal time intervals, the average speed is the arithmetic mean of the speeds: (60 + 40) / 2 = 50 mph."
+      },
+      {
+        "id": "eval_180",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly defines the perimeter as the product of length and width (which is the formula for area). The correct formula for the perimeter of a rectangle is 2 * (length + width), which would result in 26 cm."
+      },
+      {
+        "id": "eval_181",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly sets up an inverted proportion. The correct ratio is 2 eggs / 3 cups = x eggs / 9 cups, which leads to x = (2 * 9) / 3 = 6 eggs."
+      },
+      {
+        "id": "eval_182",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly calculates the original price by adding 20% of the discounted price rather than accounting for the 20% discount on the original price. If the original price is x, the equation should be 0.8x = 120, resulting in an original price of $150."
+      },
+      {
+        "id": "eval_183",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly assumes the larger number is the difference of the sum and the difference. The correct method is to solve the system of equations x + y = 30 and x - y = 10, which yields x = 20 and y = 10; while the answer 20 happens to be correct, the logic used to derive it is mathematically invalid."
+      },
+      {
+        "id": "eval_184",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The formula for speed is distance divided by time (Speed = Distance / Time), not distance multiplied by time. The reasoning incorrectly multiplies 120 miles by 2 hours to arrive at 240."
+      },
+      {
+        "id": "eval_185",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly adds the drainage rate instead of subtracting it. The net flow should be 10 - 4 = 6 L/min, not 14 L/min."
+      },
+      {
+        "id": "eval_186",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly uses the diameter (10) as the radius (r) in the area formula A = \u03c0r\u00b2. The radius should be half of the diameter (5), leading to an area of 3.14 * 5\u00b2 = 78.5."
+      },
+      {
+        "id": "eval_187",
+        "error_category": "incorrect_setup",
+        "gold_step": 2,
+        "llm_step": 2,
+        "solver_status": "verified",
+        "llm_explanation": "Step 2 incorrectly adds the cost of the books to the initial amount instead of subtracting it, which contradicts the requirement to find the remaining money."
+      },
+      {
+        "id": "eval_188",
+        "error_category": "incorrect_setup",
+        "gold_step": 2,
+        "llm_step": 2,
+        "solver_status": "verified",
+        "llm_explanation": "The average of a set of numbers is calculated by dividing the sum by the count of the numbers. Since there are four numbers (10, 20, 30, 40), the sum should be divided by 4, not 3."
+      },
+      {
+        "id": "eval_189",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly multiplies the rate by the total distance instead of normalizing the rate per kilometer. The correct calculation is (8 liters / 100 km) * 250 km = 20 liters."
+      },
+      {
+        "id": "eval_190",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning incorrectly assumes Jerry gets half the total; if Tom gets twice as much as Jerry, the total should be divided into three parts (one for Jerry, two for Tom), meaning Jerry gets 60 / 3 = 20."
+      },
+      {
+        "id": "eval_191",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning is circular because it assumes the conclusion (x = 5) as the starting premise. A proof must derive the conclusion from established axioms or given information, not by asserting the result at the outset."
+      },
+      {
+        "id": "eval_192",
+        "error_category": "domain_violation",
+        "gold_step": 2,
+        "llm_step": 2,
+        "solver_status": "verified",
+        "llm_explanation": "The problem explicitly asks for an integer n, but the reasoning concludes that 4.5 is the solution. Since 4.5 is not an integer, the reasoning fails to satisfy the problem constraints, and the equation 2n + 1 = 10 has no integer solution."
+      },
+      {
+        "id": "eval_193",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning is incomplete because it only considers the positive branch of the absolute value equation. It fails to account for the negative branch (x - 3 = -5), which results in the lost solution x = -2."
+      },
+      {
+        "id": "eval_194",
+        "error_category": "incorrect_setup",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The reasoning fails because a triangle with side lengths 1, 2, and 5 violates the triangle inequality theorem (1 + 2 < 5), meaning such a triangle cannot exist. Therefore, the perimeter is undefined as the shape is not a triangle."
+      },
+      {
+        "id": "eval_198",
+        "error_category": "invalid_transformation",
+        "gold_step": 2,
+        "llm_step": 2,
+        "solver_status": "verification_failed",
+        "llm_explanation": "The reasoning incorrectly identifies 15 as a prime number; 15 is a composite number because it is divisible by 3 and 5 (15 = 3 \u00d7 5). Furthermore, no prime number greater than 5 can end in 5, as any such number would be divisible by 5."
+      },
+      {
+        "id": "eval_199",
+        "error_category": "arithmetic_error",
+        "gold_step": 2,
+        "llm_step": 2,
+        "solver_status": "verified",
+        "llm_explanation": "In Step 2, the calculation 15 mod 5 is incorrect; since 15 is exactly divisible by 5, the remainder is 0, not 1."
+      },
+      {
+        "id": "eval_200",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_status": "verified",
+        "llm_explanation": "The operation of 'cancelling' digits is not a valid algebraic property; the expression 16/64 represents the division of sixteen by sixty-four, which equals 0.25, but the cancellation of the digit '6' is a heuristic fallacy that does not hold for general division."
+      }
+    ],
+    "total_classification_disagreements_count": 78,
+    "classification_disagreements": [
+      {
+        "id": "eval_008",
+        "gold_is_correct": true,
+        "error_category": "none",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_019",
+        "gold_is_correct": true,
+        "error_category": "none",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_030",
+        "gold_is_correct": true,
+        "error_category": "none",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_054",
+        "gold_is_correct": true,
+        "error_category": "none",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_061",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_062",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_063",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "incorrect",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "unsupported_symbolic_llm_error"
+      },
+      {
+        "id": "eval_064",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_065",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_066",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_067",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_068",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_069",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "correct",
+        "verdict_type": "llm_accepted_symbolic_unsupported"
+      },
+      {
+        "id": "eval_070",
+        "gold_is_correct": true,
+        "error_category": "unsupported",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_092",
+        "gold_is_correct": false,
+        "error_category": "arithmetic_error",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_105",
+        "gold_is_correct": false,
+        "error_category": "arithmetic_error",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_107",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_111",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_112",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_113",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_114",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_115",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_116",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_118",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "correct",
+        "solver_classification": "incorrect",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "solver_overruled_llm"
+      },
+      {
+        "id": "eval_119",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_120",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_121",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_122",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_123",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_124",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_125",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_126",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_127",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_128",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_129",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_130",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_132",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_133",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_135",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_136",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_137",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_138",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_140",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_141",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_142",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_143",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_144",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_145",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_163",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_165",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_166",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_167",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_170",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_171",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_172",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_175",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_176",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_177",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_178",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_179",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_180",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_181",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_182",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_183",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_184",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_185",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_186",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_187",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_188",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_189",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_190",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_191",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_192",
+        "gold_is_correct": false,
+        "error_category": "domain_violation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_193",
+        "gold_is_correct": false,
+        "error_category": "lost_solution",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_194",
+        "gold_is_correct": false,
+        "error_category": "incorrect_setup",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_198",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "unsupported",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "unsupported_symbolic_llm_error"
+      },
+      {
+        "id": "eval_199",
+        "gold_is_correct": false,
+        "error_category": "arithmetic_error",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      },
+      {
+        "id": "eval_200",
+        "gold_is_correct": false,
+        "error_category": "invalid_transformation",
+        "llm_classification": "incorrect",
+        "solver_classification": "correct",
+        "hybrid_classification": "incorrect",
+        "verdict_type": "llm_semantic_error"
+      }
+    ],
+    "introduced_false_positives_count": 5,
+    "introduced_false_positives": [
+      {
+        "id": "eval_008",
+        "gold_category": "none",
+        "solver_error_category": "lost_solution",
+        "solver_evidence": "Invalid algebraic transformation: divided both sides by variable expression 'x - 3', losing solution(s) ['3'] and risking division by zero if x - 3 = 0.",
+        "llm_explanation": "The quadratic expression x^2 - 5x + 6 factors correctly into (x - 2)(x - 3), and setting each factor to zero yields the correct roots 2 and 3."
+      },
+      {
+        "id": "eval_019",
+        "gold_category": "none",
+        "solver_error_category": "invalid_transformation",
+        "solver_evidence": "Transition involves an invalid mathematical statement ('x = 3 or x').",
+        "llm_explanation": "The algebraic steps are logically sound: adding 9 to both sides correctly isolates the squared term, and taking the square root of both sides correctly identifies both the positive and negative roots."
+      },
+      {
+        "id": "eval_030",
+        "gold_category": "none",
+        "solver_error_category": "lost_solution",
+        "solver_evidence": "Invalid algebraic transformation: divided both sides by variable expression 'x + 1', losing solution(s) ['-1'] and risking division by zero if x + 1 = 0.",
+        "llm_explanation": "The quadratic equation is correctly factored into (x - 5)(x + 1) = 0, and the roots are correctly identified by applying the zero product property."
+      },
+      {
+        "id": "eval_065",
+        "gold_category": "unsupported",
+        "solver_error_category": "invalid_transformation",
+        "solver_evidence": "Transition involves an invalid mathematical statement ('Area = ((Base1 + Base2) / 2) * Height').",
+        "llm_explanation": "The formula used is the standard area formula for a trapezoid, and the arithmetic operations performed in the substitution step are accurate."
+      },
+      {
+        "id": "eval_070",
+        "gold_category": "unsupported",
+        "solver_error_category": "invalid_transformation",
+        "solver_evidence": "Transition involves an invalid mathematical statement ('Slope = (y2 - y1) / (x2 - x1)').",
+        "llm_explanation": "The slope formula is correctly identified, and the arithmetic substitution and calculation are accurate."
+      }
+    ],
+    "step_disagreements_on_tp_count": 7,
+    "step_disagreements_on_tp": [
+      {
+        "id": "eval_110",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_step": 3,
+        "hybrid_step": 1
+      },
+      {
+        "id": "eval_117",
+        "error_category": "invalid_transformation",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_step": 2,
+        "hybrid_step": 1
+      },
+      {
+        "id": "eval_134",
+        "error_category": "lost_solution",
+        "gold_step": 1,
+        "llm_step": 1,
+        "solver_step": 2,
+        "hybrid_step": 1
+      },
+      {
+        "id": "eval_153",
+        "error_category": "division_by_zero",
+        "gold_step": 2,
+        "llm_step": 2,
+        "solver_step": 1,
+        "hybrid_step": 2
+      },
+      {
+        "id": "eval_161",
+        "error_category": "domain_violation",
+        "gold_step": 3,
+        "llm_step": 3,
+        "solver_step": 1,
+        "hybrid_step": 3
+      },
+      {
+        "id": "eval_164",
+        "error_category": "domain_violation",
+        "gold_step": 3,
+        "llm_step": 2,
+        "solver_step": 1,
+        "hybrid_step": 2
+      },
+      {
+        "id": "eval_195",
+        "error_category": "invalid_transformation",
+        "gold_step": 3,
+        "llm_step": 3,
+        "solver_step": 2,
+        "hybrid_step": 3
+      }
+    ]
+  }
+}
