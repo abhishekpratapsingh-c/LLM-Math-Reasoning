@@ -27,7 +27,7 @@ All four systems evaluated on the exact **187 common cases** successfully comple
 | Approach / Paradigm | Model / Methodology | Cond Loc Acc | Uncond Loc Acc | MAE Step Dist | Exact Matches | TP | FN | FP | Dist 0 | Dist 1 | Dist 2 |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Obj 27: LLM Baseline** | Zero-Shot Direct Prompt | **97.12%** | **94.39%** | 0.0288 | 101 | 104 | 3 | 3 | 101 | 3 | 0 |
-| **Obj 28: Improved LLM** | Structured Few-Shot Prompt | **96.15%** | **93.46%** | 0.0385 | 100 | 104 | 3 | 3 | 100 | 4 | 0 |
+| **Obj 28: Improved LLM** | Improved LLM Verification Prompt | **96.15%** | **93.46%** | 0.0385 | 100 | 104 | 3 | 3 | 100 | 4 | 0 |
 | **Obj 29: Solver-Only** | SymPy AST & Transition Verifier | **84.48%** | **45.79%** | 0.2069 | 49 | 58 | 49 | 6 | 49 | 6 | 3 |
 | **Obj 30: Hybrid System** | Neuro-Symbolic Evidence Fusion | **97.20%** | **97.20%** | 0.0280 | 104 | 107 | 0 | 8 | 104 | 3 | 0 |
 

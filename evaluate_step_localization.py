@@ -409,7 +409,7 @@ def format_step_localization_markdown_report(
 
     for sys_key, display_name, arch in [
         ("obj27_common_187", "Obj 27: LLM Baseline", "Zero-Shot Direct Prompt"),
-        ("obj28_common_187", "Obj 28: Improved LLM", "Structured Few-Shot Prompt"),
+        ("obj28_common_187", "Obj 28: Improved LLM", "Improved LLM Verification Prompt"),
         ("obj29_common_187", "Obj 29: Solver-Only", "SymPy AST & Transition Verifier"),
         ("obj30_common_187", "Obj 30: Hybrid System", "Neuro-Symbolic Evidence Fusion"),
     ]:
