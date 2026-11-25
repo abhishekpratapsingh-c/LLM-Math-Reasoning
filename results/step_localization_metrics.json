@@ -1,0 +1,1200 @@
+{
+  "metadata": {
+    "evaluation_title": "Objective 32: Step-Level Localization Evaluation",
+    "timestamp_utc": "2026-11-25T03:21:33.332716+00:00",
+    "canonical_dataset_count": 200,
+    "common_subset_count": 187
+  },
+  "systems": {
+    "obj27_full_200": {
+      "dataset_counts": {
+        "total_cases": 200,
+        "sound_cases": 80,
+        "error_cases": 120
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 117,
+        "false_negatives": 3,
+        "false_positives": 3,
+        "true_negatives": 77
+      },
+      "overall_localization": {
+        "exact_matches": 114,
+        "tp_count": 117,
+        "error_case_count": 120,
+        "conditional_localization_accuracy": 0.9743589743589743,
+        "unconditional_localization_accuracy": 0.95,
+        "mean_absolute_step_distance": 0.02564102564102564,
+        "distance_distribution": {
+          "exact_match_0": 114,
+          "distance_1": 3,
+          "distance_2": 0,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 24,
+          "exact_matches": 24,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9230769230769231
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 15,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "domain_violation": {
+          "total_cases": 17,
+          "true_positives": 17,
+          "exact_matches": 14,
+          "conditional_accuracy": 0.8235294117647058,
+          "unconditional_accuracy": 0.8235294117647058
+        },
+        "incorrect_setup": {
+          "total_cases": 17,
+          "true_positives": 17,
+          "exact_matches": 17,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 28,
+          "exact_matches": 28,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9655172413793104
+        },
+        "lost_solution": {
+          "total_cases": 16,
+          "true_positives": 16,
+          "exact_matches": 16,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 85,
+          "true_positives": 83,
+          "exact_matches": 83,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9764705882352941
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 26,
+          "exact_matches": 24,
+          "conditional_accuracy": 0.9230769230769231,
+          "unconditional_accuracy": 0.8888888888888888
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 8,
+          "true_positives": 8,
+          "exact_matches": 7,
+          "conditional_accuracy": 0.875,
+          "unconditional_accuracy": 0.875
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 77,
+          "Pred Step 1": 1,
+          "Pred Step 2": 1,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 2,
+          "Pred Step 1": 83,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 1,
+          "Pred Step 1": 2,
+          "Pred Step 2": 24,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 1,
+          "Pred Step 3": 7,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        }
+      ]
+    },
+    "obj29_full_200": {
+      "dataset_counts": {
+        "total_cases": 200,
+        "sound_cases": 80,
+        "error_cases": 120
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 59,
+        "false_negatives": 61,
+        "false_positives": 6,
+        "true_negatives": 74
+      },
+      "overall_localization": {
+        "exact_matches": 50,
+        "tp_count": 59,
+        "error_case_count": 120,
+        "conditional_localization_accuracy": 0.847457627118644,
+        "unconditional_localization_accuracy": 0.4166666666666667,
+        "mean_absolute_step_distance": 0.2033898305084746,
+        "distance_distribution": {
+          "exact_match_0": 50,
+          "distance_1": 6,
+          "distance_2": 3,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 25,
+          "exact_matches": 25,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9615384615384616
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 14,
+          "conditional_accuracy": 0.9333333333333333,
+          "unconditional_accuracy": 0.9333333333333333
+        },
+        "domain_violation": {
+          "total_cases": 17,
+          "true_positives": 8,
+          "exact_matches": 4,
+          "conditional_accuracy": 0.5,
+          "unconditional_accuracy": 0.23529411764705882
+        },
+        "incorrect_setup": {
+          "total_cases": 17,
+          "true_positives": 0,
+          "exact_matches": 0,
+          "conditional_accuracy": null,
+          "unconditional_accuracy": 0.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 8,
+          "exact_matches": 5,
+          "conditional_accuracy": 0.625,
+          "unconditional_accuracy": 0.1724137931034483
+        },
+        "lost_solution": {
+          "total_cases": 16,
+          "true_positives": 3,
+          "exact_matches": 2,
+          "conditional_accuracy": 0.6666666666666666,
+          "unconditional_accuracy": 0.125
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 85,
+          "true_positives": 31,
+          "exact_matches": 28,
+          "conditional_accuracy": 0.9032258064516129,
+          "unconditional_accuracy": 0.32941176470588235
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 22,
+          "exact_matches": 19,
+          "conditional_accuracy": 0.8636363636363636,
+          "unconditional_accuracy": 0.7037037037037037
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 8,
+          "true_positives": 6,
+          "exact_matches": 3,
+          "conditional_accuracy": 0.5,
+          "unconditional_accuracy": 0.375
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 74,
+          "Pred Step 1": 0,
+          "Pred Step 2": 5,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 54,
+          "Pred Step 1": 28,
+          "Pred Step 2": 2,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 5,
+          "Pred Step 1": 3,
+          "Pred Step 2": 19,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 2,
+          "Pred Step 1": 2,
+          "Pred Step 2": 1,
+          "Pred Step 3": 3,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_110",
+          "gold_step": 1,
+          "predicted_step": 3,
+          "distance": 2,
+          "category": "invalid_transformation"
+        },
+        {
+          "id": "eval_117",
+          "gold_step": 1,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "invalid_transformation"
+        },
+        {
+          "id": "eval_134",
+          "gold_step": 1,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "lost_solution"
+        },
+        {
+          "id": "eval_153",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "division_by_zero"
+        },
+        {
+          "id": "eval_161",
+          "gold_step": 3,
+          "predicted_step": 1,
+          "distance": 2,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 1,
+          "distance": 2,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_195",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "invalid_transformation"
+        }
+      ]
+    },
+    "obj30_full_200": {
+      "dataset_counts": {
+        "total_cases": 200,
+        "sound_cases": 80,
+        "error_cases": 120
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 120,
+        "false_negatives": 0,
+        "false_positives": 8,
+        "true_negatives": 72
+      },
+      "overall_localization": {
+        "exact_matches": 117,
+        "tp_count": 120,
+        "error_case_count": 120,
+        "conditional_localization_accuracy": 0.975,
+        "unconditional_localization_accuracy": 0.975,
+        "mean_absolute_step_distance": 0.025,
+        "distance_distribution": {
+          "exact_match_0": 117,
+          "distance_1": 3,
+          "distance_2": 0,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 26,
+          "exact_matches": 26,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 15,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "domain_violation": {
+          "total_cases": 17,
+          "true_positives": 17,
+          "exact_matches": 14,
+          "conditional_accuracy": 0.8235294117647058,
+          "unconditional_accuracy": 0.8235294117647058
+        },
+        "incorrect_setup": {
+          "total_cases": 17,
+          "true_positives": 17,
+          "exact_matches": 17,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 29,
+          "exact_matches": 29,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "lost_solution": {
+          "total_cases": 16,
+          "true_positives": 16,
+          "exact_matches": 16,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 85,
+          "true_positives": 85,
+          "exact_matches": 85,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 27,
+          "exact_matches": 25,
+          "conditional_accuracy": 0.9259259259259259,
+          "unconditional_accuracy": 0.9259259259259259
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 8,
+          "true_positives": 8,
+          "exact_matches": 7,
+          "conditional_accuracy": 0.875,
+          "unconditional_accuracy": 0.875
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 72,
+          "Pred Step 1": 1,
+          "Pred Step 2": 6,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 0,
+          "Pred Step 1": 85,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 0,
+          "Pred Step 1": 2,
+          "Pred Step 2": 25,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 1,
+          "Pred Step 3": 7,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        }
+      ]
+    },
+    "obj27_common_187": {
+      "dataset_counts": {
+        "total_cases": 187,
+        "sound_cases": 80,
+        "error_cases": 107
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 104,
+        "false_negatives": 3,
+        "false_positives": 3,
+        "true_negatives": 77
+      },
+      "overall_localization": {
+        "exact_matches": 101,
+        "tp_count": 104,
+        "error_case_count": 107,
+        "conditional_localization_accuracy": 0.9711538461538461,
+        "unconditional_localization_accuracy": 0.9439252336448598,
+        "mean_absolute_step_distance": 0.028846153846153848,
+        "distance_distribution": {
+          "exact_match_0": 101,
+          "distance_1": 3,
+          "distance_2": 0,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 24,
+          "exact_matches": 24,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9230769230769231
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 15,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "domain_violation": {
+          "total_cases": 13,
+          "true_positives": 13,
+          "exact_matches": 10,
+          "conditional_accuracy": 0.7692307692307693,
+          "unconditional_accuracy": 0.7692307692307693
+        },
+        "incorrect_setup": {
+          "total_cases": 10,
+          "true_positives": 10,
+          "exact_matches": 10,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 28,
+          "exact_matches": 28,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9655172413793104
+        },
+        "lost_solution": {
+          "total_cases": 14,
+          "true_positives": 14,
+          "exact_matches": 14,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 74,
+          "true_positives": 72,
+          "exact_matches": 72,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.972972972972973
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 26,
+          "exact_matches": 24,
+          "conditional_accuracy": 0.9230769230769231,
+          "unconditional_accuracy": 0.8888888888888888
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 6,
+          "true_positives": 6,
+          "exact_matches": 5,
+          "conditional_accuracy": 0.8333333333333334,
+          "unconditional_accuracy": 0.8333333333333334
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 77,
+          "Pred Step 1": 1,
+          "Pred Step 2": 1,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 2,
+          "Pred Step 1": 72,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 1,
+          "Pred Step 1": 2,
+          "Pred Step 2": 24,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 1,
+          "Pred Step 3": 5,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        }
+      ]
+    },
+    "obj28_common_187": {
+      "dataset_counts": {
+        "total_cases": 187,
+        "sound_cases": 80,
+        "error_cases": 107
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 104,
+        "false_negatives": 3,
+        "false_positives": 3,
+        "true_negatives": 77
+      },
+      "overall_localization": {
+        "exact_matches": 100,
+        "tp_count": 104,
+        "error_case_count": 107,
+        "conditional_localization_accuracy": 0.9615384615384616,
+        "unconditional_localization_accuracy": 0.9345794392523364,
+        "mean_absolute_step_distance": 0.038461538461538464,
+        "distance_distribution": {
+          "exact_match_0": 100,
+          "distance_1": 4,
+          "distance_2": 0,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 24,
+          "exact_matches": 24,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9230769230769231
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 15,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "domain_violation": {
+          "total_cases": 13,
+          "true_positives": 13,
+          "exact_matches": 10,
+          "conditional_accuracy": 0.7692307692307693,
+          "unconditional_accuracy": 0.7692307692307693
+        },
+        "incorrect_setup": {
+          "total_cases": 10,
+          "true_positives": 10,
+          "exact_matches": 10,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 28,
+          "exact_matches": 27,
+          "conditional_accuracy": 0.9642857142857143,
+          "unconditional_accuracy": 0.9310344827586207
+        },
+        "lost_solution": {
+          "total_cases": 14,
+          "true_positives": 14,
+          "exact_matches": 14,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 74,
+          "true_positives": 72,
+          "exact_matches": 72,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.972972972972973
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 26,
+          "exact_matches": 23,
+          "conditional_accuracy": 0.8846153846153846,
+          "unconditional_accuracy": 0.8518518518518519
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 6,
+          "true_positives": 6,
+          "exact_matches": 5,
+          "conditional_accuracy": 0.8333333333333334,
+          "unconditional_accuracy": 0.8333333333333334
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 77,
+          "Pred Step 1": 1,
+          "Pred Step 2": 1,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 2,
+          "Pred Step 1": 72,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 1,
+          "Pred Step 1": 2,
+          "Pred Step 2": 23,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 1,
+          "Pred Step 3": 5,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_196",
+          "gold_step": 2,
+          "predicted_step": 3,
+          "distance": 1,
+          "category": "invalid_transformation"
+        }
+      ]
+    },
+    "obj29_common_187": {
+      "dataset_counts": {
+        "total_cases": 187,
+        "sound_cases": 80,
+        "error_cases": 107
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 58,
+        "false_negatives": 49,
+        "false_positives": 6,
+        "true_negatives": 74
+      },
+      "overall_localization": {
+        "exact_matches": 49,
+        "tp_count": 58,
+        "error_case_count": 107,
+        "conditional_localization_accuracy": 0.8448275862068966,
+        "unconditional_localization_accuracy": 0.45794392523364486,
+        "mean_absolute_step_distance": 0.20689655172413793,
+        "distance_distribution": {
+          "exact_match_0": 49,
+          "distance_1": 6,
+          "distance_2": 3,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 25,
+          "exact_matches": 25,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 0.9615384615384616
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 14,
+          "conditional_accuracy": 0.9333333333333333,
+          "unconditional_accuracy": 0.9333333333333333
+        },
+        "domain_violation": {
+          "total_cases": 13,
+          "true_positives": 7,
+          "exact_matches": 3,
+          "conditional_accuracy": 0.42857142857142855,
+          "unconditional_accuracy": 0.23076923076923078
+        },
+        "incorrect_setup": {
+          "total_cases": 10,
+          "true_positives": 0,
+          "exact_matches": 0,
+          "conditional_accuracy": null,
+          "unconditional_accuracy": 0.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 8,
+          "exact_matches": 5,
+          "conditional_accuracy": 0.625,
+          "unconditional_accuracy": 0.1724137931034483
+        },
+        "lost_solution": {
+          "total_cases": 14,
+          "true_positives": 3,
+          "exact_matches": 2,
+          "conditional_accuracy": 0.6666666666666666,
+          "unconditional_accuracy": 0.14285714285714285
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 74,
+          "true_positives": 31,
+          "exact_matches": 28,
+          "conditional_accuracy": 0.9032258064516129,
+          "unconditional_accuracy": 0.3783783783783784
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 22,
+          "exact_matches": 19,
+          "conditional_accuracy": 0.8636363636363636,
+          "unconditional_accuracy": 0.7037037037037037
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 6,
+          "true_positives": 5,
+          "exact_matches": 2,
+          "conditional_accuracy": 0.4,
+          "unconditional_accuracy": 0.3333333333333333
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 74,
+          "Pred Step 1": 0,
+          "Pred Step 2": 5,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 43,
+          "Pred Step 1": 28,
+          "Pred Step 2": 2,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 5,
+          "Pred Step 1": 3,
+          "Pred Step 2": 19,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 1,
+          "Pred Step 1": 2,
+          "Pred Step 2": 1,
+          "Pred Step 3": 2,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_110",
+          "gold_step": 1,
+          "predicted_step": 3,
+          "distance": 2,
+          "category": "invalid_transformation"
+        },
+        {
+          "id": "eval_117",
+          "gold_step": 1,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "invalid_transformation"
+        },
+        {
+          "id": "eval_134",
+          "gold_step": 1,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "lost_solution"
+        },
+        {
+          "id": "eval_153",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "division_by_zero"
+        },
+        {
+          "id": "eval_161",
+          "gold_step": 3,
+          "predicted_step": 1,
+          "distance": 2,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 1,
+          "distance": 2,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_195",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "invalid_transformation"
+        }
+      ]
+    },
+    "obj30_common_187": {
+      "dataset_counts": {
+        "total_cases": 187,
+        "sound_cases": 80,
+        "error_cases": 107
+      },
+      "confusion_matrix_counts": {
+        "true_positives": 107,
+        "false_negatives": 0,
+        "false_positives": 8,
+        "true_negatives": 72
+      },
+      "overall_localization": {
+        "exact_matches": 104,
+        "tp_count": 107,
+        "error_case_count": 107,
+        "conditional_localization_accuracy": 0.9719626168224299,
+        "unconditional_localization_accuracy": 0.9719626168224299,
+        "mean_absolute_step_distance": 0.028037383177570093,
+        "distance_distribution": {
+          "exact_match_0": 104,
+          "distance_1": 3,
+          "distance_2": 0,
+          "distance_3_or_more": 0
+        }
+      },
+      "by_error_category": {
+        "arithmetic_error": {
+          "total_cases": 26,
+          "true_positives": 26,
+          "exact_matches": 26,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "division_by_zero": {
+          "total_cases": 15,
+          "true_positives": 15,
+          "exact_matches": 15,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "domain_violation": {
+          "total_cases": 13,
+          "true_positives": 13,
+          "exact_matches": 10,
+          "conditional_accuracy": 0.7692307692307693,
+          "unconditional_accuracy": 0.7692307692307693
+        },
+        "incorrect_setup": {
+          "total_cases": 10,
+          "true_positives": 10,
+          "exact_matches": 10,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "invalid_transformation": {
+          "total_cases": 29,
+          "true_positives": 29,
+          "exact_matches": 29,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "lost_solution": {
+          "total_cases": 14,
+          "true_positives": 14,
+          "exact_matches": 14,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        }
+      },
+      "by_error_step_depth": {
+        "step_1": {
+          "step_depth": 1,
+          "total_cases": 74,
+          "true_positives": 74,
+          "exact_matches": 74,
+          "conditional_accuracy": 1.0,
+          "unconditional_accuracy": 1.0
+        },
+        "step_2": {
+          "step_depth": 2,
+          "total_cases": 27,
+          "true_positives": 27,
+          "exact_matches": 25,
+          "conditional_accuracy": 0.9259259259259259,
+          "unconditional_accuracy": 0.9259259259259259
+        },
+        "step_3": {
+          "step_depth": 3,
+          "total_cases": 6,
+          "true_positives": 6,
+          "exact_matches": 5,
+          "conditional_accuracy": 0.8333333333333334,
+          "unconditional_accuracy": 0.8333333333333334
+        }
+      },
+      "first_error_confusion_matrix": {
+        "Sound": {
+          "No Error Pred": 72,
+          "Pred Step 1": 1,
+          "Pred Step 2": 6,
+          "Pred Step 3": 1,
+          "Pred Step 4": 0
+        },
+        "Step 1": {
+          "No Error Pred": 0,
+          "Pred Step 1": 74,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 2": {
+          "No Error Pred": 0,
+          "Pred Step 1": 2,
+          "Pred Step 2": 25,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        },
+        "Step 3": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 1,
+          "Pred Step 3": 5,
+          "Pred Step 4": 0
+        },
+        "Step 4": {
+          "No Error Pred": 0,
+          "Pred Step 1": 0,
+          "Pred Step 2": 0,
+          "Pred Step 3": 0,
+          "Pred Step 4": 0
+        }
+      },
+      "mislocalized_cases": [
+        {
+          "id": "eval_164",
+          "gold_step": 3,
+          "predicted_step": 2,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_168",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        },
+        {
+          "id": "eval_174",
+          "gold_step": 2,
+          "predicted_step": 1,
+          "distance": 1,
+          "category": "domain_violation"
+        }
+      ]
+    }
+  }
+}
