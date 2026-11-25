@@ -1,0 +1,1101 @@
+{
+  "metadata": {
+    "evaluation_name": "Objective 27 (Baseline) vs Objective 28 (Improved) Comparison (187 Common Cases)",
+    "timestamp_utc": "2026-11-24T19:18:15.156249+00:00",
+    "canonical_dataset_size": 200,
+    "evaluated_cases_count": 187,
+    "excluded_cases_count": 13,
+    "excluded_cases": [
+      "eval_136",
+      "eval_140",
+      "eval_170",
+      "eval_171",
+      "eval_173",
+      "eval_175",
+      "eval_178",
+      "eval_179",
+      "eval_181",
+      "eval_182",
+      "eval_183",
+      "eval_184",
+      "eval_185"
+    ],
+    "exclusion_reason": "Transient Gemini API 503 UNAVAILABLE service overloads during Objective 28 evaluation. Strictly excluded from both systems to guarantee exact like-for-like comparison.",
+    "objective_27": {
+      "name": "LLM Baseline Error Detector",
+      "provider": "gemini",
+      "model": "gemini-3.1-flash-lite",
+      "prompt_style": "Zero-shot direct reasoning error classification prompt",
+      "total_successful_records": 200
+    },
+    "objective_28": {
+      "name": "Improved LLM Error Detector",
+      "provider": "gemini",
+      "model": "gemini-3.1-flash-lite",
+      "prompt_style": "Structured verification prompt with error typology, domain check rules, step-level localization, and systematic verification guidelines",
+      "total_successful_records": 187
+    }
+  },
+  "summary_deltas": {
+    "strict_accuracy_delta": 0.0,
+    "decisive_accuracy_delta": 0.0,
+    "decisive_coverage_delta": 0.0,
+    "uncertainty_rate_delta": 0.0,
+    "precision_delta": 0.0,
+    "conservative_recall_delta": 0.0,
+    "f1_delta": 0.0,
+    "step_localization_accuracy_delta": -0.0097,
+    "false_positive_reduction": 0,
+    "false_negative_reduction": 0
+  },
+  "case_level_breakdown": {
+    "both_correct_count": 181,
+    "both_incorrect_count": 6,
+    "baseline_correct_improved_incorrect_count": 0,
+    "improved_correct_baseline_incorrect_count": 0,
+    "classification_disagreements_count": 0,
+    "step_localization_disagreements_on_tp_count": 1,
+    "both_correct_ids": [
+      "eval_001",
+      "eval_002",
+      "eval_003",
+      "eval_004",
+      "eval_005",
+      "eval_006",
+      "eval_007",
+      "eval_008",
+      "eval_009",
+      "eval_010",
+      "eval_011",
+      "eval_012",
+      "eval_013",
+      "eval_014",
+      "eval_015",
+      "eval_016",
+      "eval_018",
+      "eval_019",
+      "eval_020",
+      "eval_021",
+      "eval_022",
+      "eval_023",
+      "eval_024",
+      "eval_025",
+      "eval_026",
+      "eval_027",
+      "eval_028",
+      "eval_029",
+      "eval_030",
+      "eval_031",
+      "eval_032",
+      "eval_033",
+      "eval_034",
+      "eval_035",
+      "eval_036",
+      "eval_037",
+      "eval_038",
+      "eval_039",
+      "eval_040",
+      "eval_041",
+      "eval_042",
+      "eval_043",
+      "eval_044",
+      "eval_045",
+      "eval_046",
+      "eval_047",
+      "eval_048",
+      "eval_049",
+      "eval_050",
+      "eval_051",
+      "eval_052",
+      "eval_053",
+      "eval_055",
+      "eval_056",
+      "eval_057",
+      "eval_058",
+      "eval_059",
+      "eval_060",
+      "eval_061",
+      "eval_062",
+      "eval_064",
+      "eval_065",
+      "eval_066",
+      "eval_067",
+      "eval_068",
+      "eval_069",
+      "eval_070",
+      "eval_071",
+      "eval_072",
+      "eval_073",
+      "eval_074",
+      "eval_075",
+      "eval_076",
+      "eval_077",
+      "eval_078",
+      "eval_079",
+      "eval_080",
+      "eval_081",
+      "eval_082",
+      "eval_083",
+      "eval_084",
+      "eval_085",
+      "eval_086",
+      "eval_087",
+      "eval_088",
+      "eval_089",
+      "eval_090",
+      "eval_091",
+      "eval_093",
+      "eval_094",
+      "eval_095",
+      "eval_096",
+      "eval_097",
+      "eval_098",
+      "eval_099",
+      "eval_100",
+      "eval_101",
+      "eval_102",
+      "eval_103",
+      "eval_104",
+      "eval_106",
+      "eval_107",
+      "eval_108",
+      "eval_109",
+      "eval_110",
+      "eval_111",
+      "eval_112",
+      "eval_113",
+      "eval_114",
+      "eval_115",
+      "eval_116",
+      "eval_117",
+      "eval_119",
+      "eval_120",
+      "eval_121",
+      "eval_122",
+      "eval_123",
+      "eval_124",
+      "eval_125",
+      "eval_126",
+      "eval_127",
+      "eval_128",
+      "eval_129",
+      "eval_130",
+      "eval_131",
+      "eval_132",
+      "eval_133",
+      "eval_134",
+      "eval_135",
+      "eval_137",
+      "eval_138",
+      "eval_139",
+      "eval_141",
+      "eval_142",
+      "eval_143",
+      "eval_144",
+      "eval_145",
+      "eval_146",
+      "eval_147",
+      "eval_148",
+      "eval_149",
+      "eval_150",
+      "eval_151",
+      "eval_152",
+      "eval_153",
+      "eval_154",
+      "eval_155",
+      "eval_156",
+      "eval_157",
+      "eval_158",
+      "eval_159",
+      "eval_160",
+      "eval_161",
+      "eval_162",
+      "eval_163",
+      "eval_164",
+      "eval_165",
+      "eval_166",
+      "eval_167",
+      "eval_168",
+      "eval_169",
+      "eval_172",
+      "eval_174",
+      "eval_176",
+      "eval_177",
+      "eval_180",
+      "eval_186",
+      "eval_187",
+      "eval_188",
+      "eval_189",
+      "eval_190",
+      "eval_191",
+      "eval_192",
+      "eval_193",
+      "eval_194",
+      "eval_195",
+      "eval_196",
+      "eval_197",
+      "eval_198",
+      "eval_199",
+      "eval_200"
+    ],
+    "both_incorrect_ids": [
+      "eval_017",
+      "eval_054",
+      "eval_063",
+      "eval_092",
+      "eval_105",
+      "eval_118"
+    ],
+    "baseline_correct_improved_incorrect_ids": [],
+    "improved_correct_baseline_incorrect_ids": [],
+    "classification_disagreements": [],
+    "step_localization_disagreements_on_tp": [
+      {
+        "id": "eval_196",
+        "gold_error_category": "invalid_transformation",
+        "gold_error_step": 2,
+        "baseline_step": 2,
+        "improved_step": 3,
+        "baseline_matched": true,
+        "improved_matched": false,
+        "baseline_explanation": "The problem describes variable shadowing, where the second assignment of 'x' replaces the first. Step 2 incorrectly implies that the two assignments coexist as distinct quantities to be added, rather than the second assignment overwriting the first.",
+        "improved_explanation": "The problem describes variable shadowing, where the second assignment of 'x' replaces the first, meaning the original value of 'x' (apples) is no longer accessible. Step 3 incorrectly treats the two assignments as additive quantities rather than a sequential update of the same variable."
+      }
+    ],
+    "shared_false_positives": [
+      {
+        "id": "eval_017",
+        "gold_error_category": "none",
+        "baseline_step": 3,
+        "improved_step": 3,
+        "baseline_explanation": "In Step 3, the reasoning incorrectly asserts that 4x = 14 is equivalent to 4x = 16. The arithmetic 11 + 3 = 14 is correct, but the subsequent transition to 16 is a calculation error, leading to an incorrect final answer of 4 instead of 3.5.",
+        "improved_explanation": "In Step 3, the reasoning contains an arithmetic error: 11 + 3 equals 14, not 16. Consequently, the final answer x = 4 is incorrect; the correct solution is x = 3.5."
+      },
+      {
+        "id": "eval_054",
+        "gold_error_category": "none",
+        "baseline_step": 1,
+        "improved_step": 1,
+        "baseline_explanation": "The reasoning trace fails to show the necessary algebraic steps to isolate x, and the jump from 2x + 5 = 15 to x = 5 is mathematically incorrect (the correct solution is x = 5, but the step provided is an unsupported assertion). Furthermore, the prompt requested the solution in 'one step', which is impossible for this linear equation without combining operations.",
+        "improved_explanation": "The reasoning trace fails to show the necessary algebraic steps to isolate x, jumping directly from the original equation to the solution without demonstrating the required operations (subtracting 5 and dividing by 2)."
+      },
+      {
+        "id": "eval_063",
+        "gold_error_category": "unsupported",
+        "baseline_step": 2,
+        "improved_step": 2,
+        "baseline_explanation": "While the arithmetic is correct, the reasoning trace fails to include the necessary physical units (g/cm^3) in the final answer, rendering the result dimensionally incomplete.",
+        "improved_explanation": "While the arithmetic calculation 200 / 50 = 4 is correct, the reasoning trace fails to include the necessary physical units (g/cm^3), which are essential for a complete and accurate solution in physics."
+      }
+    ],
+    "shared_false_negatives": [
+      {
+        "id": "eval_092",
+        "gold_error_category": "arithmetic_error",
+        "gold_error_step": 1,
+        "baseline_classification": "correct",
+        "improved_classification": "correct",
+        "baseline_explanation": "The perimeter of a rectangle is calculated using the formula P = 2(l + w). The reasoning correctly adds the length and width (15 + 7 = 22, wait\u2014re-evaluating). Correction: 15 + 7 = 22, not 21. The reasoning contains an arithmetic error in Step 1.",
+        "improved_explanation": "The perimeter of a rectangle is calculated using the formula P = 2(l + w). The reasoning correctly adds the length and width (15 + 7 = 22, wait, 15 + 7 = 22, not 21). Correction: 15 + 7 = 22, and 2 * 22 = 44. The proposed trace contains an arithmetic error in Step 1."
+      },
+      {
+        "id": "eval_105",
+        "gold_error_category": "arithmetic_error",
+        "gold_error_step": 1,
+        "baseline_classification": "correct",
+        "improved_classification": "correct",
+        "baseline_explanation": "The subtraction 1000 - 875 is performed correctly, resulting in 125. Wait, re-evaluating: 1000 - 875 = 125. The provided trace claims 225, which is an arithmetic error.",
+        "improved_explanation": "The arithmetic operation 1000 - 875 = 125 is the correct result; however, the proposed trace states 225. Wait, re-evaluating: 1000 - 875 = 125. The proposed trace claims 225, which is incorrect."
+      },
+      {
+        "id": "eval_118",
+        "gold_error_category": "invalid_transformation",
+        "gold_error_step": 2,
+        "baseline_classification": "correct",
+        "improved_classification": "correct",
+        "baseline_explanation": "The expansion in Step 1 is correct, and the algebraic manipulation in Step 2 correctly isolates x by subtracting 2x from both sides and adding 3 to both sides, resulting in the correct solution.",
+        "improved_explanation": "The expansion in Step 1 is correct, and the algebraic manipulation in Step 2 correctly isolates x by subtracting 2x from both sides and adding 3 to both sides, resulting in the correct solution."
+      }
+    ]
+  },
+  "baseline_metrics": {
+    "overall": {
+      "subset_name": "Overall Dataset",
+      "total_cases": 187,
+      "gold_correct_count": 80,
+      "gold_incorrect_count": 107,
+      "confusion_matrix": {
+        "true_positives": 104,
+        "false_positives": 3,
+        "true_negatives": 77,
+        "false_negatives_explicit": 3,
+        "false_negatives_uncertain": 0,
+        "total_false_negatives": 3,
+        "abstentions_on_correct": 0,
+        "total_uncertain": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.9679,
+        "decisive_accuracy": 0.9679,
+        "decisive_coverage": 1.0,
+        "uncertainty_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.972,
+        "conservative_recall": 0.972,
+        "f1_score": 0.972
+      },
+      "step_localization": {
+        "step_match_count": 101,
+        "tp_with_gold_step_count": 104,
+        "localization_accuracy": 0.9712
+      }
+    },
+    "cohorts": {
+      "sound_reasoning_none": {
+        "subset_name": "Cohort 1: Sound Reasoning (none)",
+        "total_cases": 60,
+        "gold_correct_count": 60,
+        "gold_incorrect_count": 0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "false_positives": 2,
+          "true_negatives": 58,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9667,
+          "decisive_accuracy": 0.9667,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 0.0,
+          "conservative_recall": 0.0,
+          "f1_score": 0.0
+        },
+        "step_localization": {
+          "step_match_count": 0,
+          "tp_with_gold_step_count": 0,
+          "localization_accuracy": 0.0
+        }
+      },
+      "unsupported_conceptual": {
+        "subset_name": "Cohort 2: Unsupported Conceptual Equations",
+        "total_cases": 10,
+        "gold_correct_count": 10,
+        "gold_incorrect_count": 0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "false_positives": 1,
+          "true_negatives": 9,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9,
+          "decisive_accuracy": 0.9,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 0.0,
+          "conservative_recall": 0.0,
+          "f1_score": 0.0
+        },
+        "step_localization": {
+          "step_match_count": 0,
+          "tp_with_gold_step_count": 0,
+          "localization_accuracy": 0.0
+        }
+      },
+      "conditional_warnings": {
+        "subset_name": "Cohort 3: Conditional Warning Cases",
+        "total_cases": 10,
+        "gold_correct_count": 10,
+        "gold_incorrect_count": 0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "false_positives": 0,
+          "true_negatives": 10,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 0.0,
+          "conservative_recall": 0.0,
+          "f1_score": 0.0
+        },
+        "step_localization": {
+          "step_match_count": 0,
+          "tp_with_gold_step_count": 0,
+          "localization_accuracy": 0.0
+        }
+      },
+      "all_incorrect_cases": {
+        "subset_name": "Cohort 4: All Injected Errors",
+        "total_cases": 107,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 107,
+        "confusion_matrix": {
+          "true_positives": 104,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 3,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 3,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.972,
+          "decisive_accuracy": 0.972,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 0.972,
+          "f1_score": 0.9858
+        },
+        "step_localization": {
+          "step_match_count": 101,
+          "tp_with_gold_step_count": 104,
+          "localization_accuracy": 0.9712
+        }
+      }
+    },
+    "incorrect_categories": {
+      "invalid_transformation": {
+        "subset_name": "Category: invalid_transformation",
+        "total_cases": 29,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 29,
+        "confusion_matrix": {
+          "true_positives": 28,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 1,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 1,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9655,
+          "decisive_accuracy": 0.9655,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 0.9655,
+          "f1_score": 0.9825
+        },
+        "step_localization": {
+          "step_match_count": 28,
+          "tp_with_gold_step_count": 28,
+          "localization_accuracy": 1.0
+        }
+      },
+      "arithmetic_error": {
+        "subset_name": "Category: arithmetic_error",
+        "total_cases": 26,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 26,
+        "confusion_matrix": {
+          "true_positives": 24,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 2,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 2,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9231,
+          "decisive_accuracy": 0.9231,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 0.9231,
+          "f1_score": 0.96
+        },
+        "step_localization": {
+          "step_match_count": 24,
+          "tp_with_gold_step_count": 24,
+          "localization_accuracy": 1.0
+        }
+      },
+      "domain_violation": {
+        "subset_name": "Category: domain_violation",
+        "total_cases": 13,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 13,
+        "confusion_matrix": {
+          "true_positives": 13,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 10,
+          "tp_with_gold_step_count": 13,
+          "localization_accuracy": 0.7692
+        }
+      },
+      "incorrect_setup": {
+        "subset_name": "Category: incorrect_setup",
+        "total_cases": 10,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 10,
+        "confusion_matrix": {
+          "true_positives": 10,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 10,
+          "tp_with_gold_step_count": 10,
+          "localization_accuracy": 1.0
+        }
+      },
+      "lost_solution": {
+        "subset_name": "Category: lost_solution",
+        "total_cases": 14,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 14,
+        "confusion_matrix": {
+          "true_positives": 14,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 14,
+          "tp_with_gold_step_count": 14,
+          "localization_accuracy": 1.0
+        }
+      },
+      "division_by_zero": {
+        "subset_name": "Category: division_by_zero",
+        "total_cases": 15,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 15,
+        "confusion_matrix": {
+          "true_positives": 15,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 15,
+          "tp_with_gold_step_count": 15,
+          "localization_accuracy": 1.0
+        }
+      }
+    },
+    "symbolic_limitations": {
+      "subset_name": "Symbolic Limitation Boundary Cases",
+      "total_cases": 10,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 10,
+      "confusion_matrix": {
+        "true_positives": 10,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_uncertain": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_uncertain": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "decisive_coverage": 1.0,
+        "uncertainty_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "conservative_recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 10,
+        "tp_with_gold_step_count": 10,
+        "localization_accuracy": 1.0
+      }
+    }
+  },
+  "improved_metrics": {
+    "overall": {
+      "subset_name": "Overall Dataset",
+      "total_cases": 187,
+      "gold_correct_count": 80,
+      "gold_incorrect_count": 107,
+      "confusion_matrix": {
+        "true_positives": 104,
+        "false_positives": 3,
+        "true_negatives": 77,
+        "false_negatives_explicit": 3,
+        "false_negatives_uncertain": 0,
+        "total_false_negatives": 3,
+        "abstentions_on_correct": 0,
+        "total_uncertain": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 0.9679,
+        "decisive_accuracy": 0.9679,
+        "decisive_coverage": 1.0,
+        "uncertainty_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 0.972,
+        "conservative_recall": 0.972,
+        "f1_score": 0.972
+      },
+      "step_localization": {
+        "step_match_count": 100,
+        "tp_with_gold_step_count": 104,
+        "localization_accuracy": 0.9615
+      }
+    },
+    "cohorts": {
+      "sound_reasoning_none": {
+        "subset_name": "Cohort 1: Sound Reasoning (none)",
+        "total_cases": 60,
+        "gold_correct_count": 60,
+        "gold_incorrect_count": 0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "false_positives": 2,
+          "true_negatives": 58,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9667,
+          "decisive_accuracy": 0.9667,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 0.0,
+          "conservative_recall": 0.0,
+          "f1_score": 0.0
+        },
+        "step_localization": {
+          "step_match_count": 0,
+          "tp_with_gold_step_count": 0,
+          "localization_accuracy": 0.0
+        }
+      },
+      "unsupported_conceptual": {
+        "subset_name": "Cohort 2: Unsupported Conceptual Equations",
+        "total_cases": 10,
+        "gold_correct_count": 10,
+        "gold_incorrect_count": 0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "false_positives": 1,
+          "true_negatives": 9,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9,
+          "decisive_accuracy": 0.9,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 0.0,
+          "conservative_recall": 0.0,
+          "f1_score": 0.0
+        },
+        "step_localization": {
+          "step_match_count": 0,
+          "tp_with_gold_step_count": 0,
+          "localization_accuracy": 0.0
+        }
+      },
+      "conditional_warnings": {
+        "subset_name": "Cohort 3: Conditional Warning Cases",
+        "total_cases": 10,
+        "gold_correct_count": 10,
+        "gold_incorrect_count": 0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "false_positives": 0,
+          "true_negatives": 10,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 0.0,
+          "conservative_recall": 0.0,
+          "f1_score": 0.0
+        },
+        "step_localization": {
+          "step_match_count": 0,
+          "tp_with_gold_step_count": 0,
+          "localization_accuracy": 0.0
+        }
+      },
+      "all_incorrect_cases": {
+        "subset_name": "Cohort 4: All Injected Errors",
+        "total_cases": 107,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 107,
+        "confusion_matrix": {
+          "true_positives": 104,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 3,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 3,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.972,
+          "decisive_accuracy": 0.972,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 0.972,
+          "f1_score": 0.9858
+        },
+        "step_localization": {
+          "step_match_count": 100,
+          "tp_with_gold_step_count": 104,
+          "localization_accuracy": 0.9615
+        }
+      }
+    },
+    "incorrect_categories": {
+      "invalid_transformation": {
+        "subset_name": "Category: invalid_transformation",
+        "total_cases": 29,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 29,
+        "confusion_matrix": {
+          "true_positives": 28,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 1,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 1,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9655,
+          "decisive_accuracy": 0.9655,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 0.9655,
+          "f1_score": 0.9825
+        },
+        "step_localization": {
+          "step_match_count": 27,
+          "tp_with_gold_step_count": 28,
+          "localization_accuracy": 0.9643
+        }
+      },
+      "arithmetic_error": {
+        "subset_name": "Category: arithmetic_error",
+        "total_cases": 26,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 26,
+        "confusion_matrix": {
+          "true_positives": 24,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 2,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 2,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 0.9231,
+          "decisive_accuracy": 0.9231,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 0.9231,
+          "f1_score": 0.96
+        },
+        "step_localization": {
+          "step_match_count": 24,
+          "tp_with_gold_step_count": 24,
+          "localization_accuracy": 1.0
+        }
+      },
+      "domain_violation": {
+        "subset_name": "Category: domain_violation",
+        "total_cases": 13,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 13,
+        "confusion_matrix": {
+          "true_positives": 13,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 10,
+          "tp_with_gold_step_count": 13,
+          "localization_accuracy": 0.7692
+        }
+      },
+      "incorrect_setup": {
+        "subset_name": "Category: incorrect_setup",
+        "total_cases": 10,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 10,
+        "confusion_matrix": {
+          "true_positives": 10,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 10,
+          "tp_with_gold_step_count": 10,
+          "localization_accuracy": 1.0
+        }
+      },
+      "lost_solution": {
+        "subset_name": "Category: lost_solution",
+        "total_cases": 14,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 14,
+        "confusion_matrix": {
+          "true_positives": 14,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 14,
+          "tp_with_gold_step_count": 14,
+          "localization_accuracy": 1.0
+        }
+      },
+      "division_by_zero": {
+        "subset_name": "Category: division_by_zero",
+        "total_cases": 15,
+        "gold_correct_count": 0,
+        "gold_incorrect_count": 15,
+        "confusion_matrix": {
+          "true_positives": 15,
+          "false_positives": 0,
+          "true_negatives": 0,
+          "false_negatives_explicit": 0,
+          "false_negatives_uncertain": 0,
+          "total_false_negatives": 0,
+          "abstentions_on_correct": 0,
+          "total_uncertain": 0
+        },
+        "accuracy_metrics": {
+          "strict_accuracy": 1.0,
+          "decisive_accuracy": 1.0,
+          "decisive_coverage": 1.0,
+          "uncertainty_rate": 0.0
+        },
+        "error_detection_metrics": {
+          "precision": 1.0,
+          "conservative_recall": 1.0,
+          "f1_score": 1.0
+        },
+        "step_localization": {
+          "step_match_count": 15,
+          "tp_with_gold_step_count": 15,
+          "localization_accuracy": 1.0
+        }
+      }
+    },
+    "symbolic_limitations": {
+      "subset_name": "Symbolic Limitation Boundary Cases",
+      "total_cases": 10,
+      "gold_correct_count": 0,
+      "gold_incorrect_count": 10,
+      "confusion_matrix": {
+        "true_positives": 10,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives_explicit": 0,
+        "false_negatives_uncertain": 0,
+        "total_false_negatives": 0,
+        "abstentions_on_correct": 0,
+        "total_uncertain": 0
+      },
+      "accuracy_metrics": {
+        "strict_accuracy": 1.0,
+        "decisive_accuracy": 1.0,
+        "decisive_coverage": 1.0,
+        "uncertainty_rate": 0.0
+      },
+      "error_detection_metrics": {
+        "precision": 1.0,
+        "conservative_recall": 1.0,
+        "f1_score": 1.0
+      },
+      "step_localization": {
+        "step_match_count": 9,
+        "tp_with_gold_step_count": 10,
+        "localization_accuracy": 0.9
+      }
+    }
+  }
+}
